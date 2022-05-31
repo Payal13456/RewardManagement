@@ -13,10 +13,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return redirect("/login");
-});
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
+Route::group(['Prefix' => '/'], function () {
+    Route::group(['middleware' => 'auth'], function () {
+
+        Route::get('/', function () {
+            return view("welcome");
+        });
+
+    });
+});
