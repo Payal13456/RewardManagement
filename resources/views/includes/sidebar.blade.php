@@ -3,7 +3,7 @@
         <div class="sidebar-header">
             <div class="d-flex justify-content-between">
                 <div class="logo">
-                    <!-- <a href="index.html"><img src="assets/images/logo/logo.png" alt="Logo" srcset=""></a> -->
+                    <!-- <a href="{{URL::route('/')}}"><img src="assets/images/logo/logo.png" alt="Logo" srcset=""></a> -->
                     <a href="javascript:void(0);">Rewards</a>
                 </div>
                 <div class="toggler">
@@ -16,7 +16,7 @@
                 <li class="sidebar-title">Menu</li>
 
                 <li class="sidebar-item active ">
-                    <a href="index.html" class='sidebar-link'>
+                    <a href="{{URL::route('/')}}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
@@ -28,7 +28,7 @@
                     </a>
                     <ul class="submenu ">
                         <li class="submenu-item ">
-                            <a href="component-alert.html">List User</a>
+                            <a href="{{URL::route('users-list')}}">List User</a>
                         </li>
                         <li class="submenu-item ">
                             <a href="component-alert.html">Message to User</a>

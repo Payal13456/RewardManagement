@@ -21,9 +21,10 @@ Route::get('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout
 Route::group(['Prefix' => '/'], function () {
     Route::group(['middleware' => 'auth'], function () {
 
-        Route::get('/', function () {
-            return view("welcome");
-        });
+        Route::get('/', [App\Http\Controllers\PanelController::class, 'getDashboard'])->name('/');
+        
+        Route::view('/users-list', 'user-list')->name('users-list');
+        Route::get('/users-list/all', [App\Http\Controllers\PanelController::class, 'getAllUsersList'])->name('users-list-all');
 
     });
 });

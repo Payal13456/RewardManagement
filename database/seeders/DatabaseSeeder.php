@@ -18,12 +18,17 @@ class DatabaseSeeder extends Seeder
     {
         User::create([
             'name'  =>  'Reward Management',
-            'short_name'    =>  'admin',
             'email' =>  'admin@mailinator.com',
-            'phone_code'    =>  '+91',
-            'phone' =>  '951xxxx753',
+            'mobile_no' =>  '951xxxx753',
             'password'  =>  bcrypt('123456'),
-            'role'  =>  1
+            'location'  =>  null,
+            'emirates_id'   =>  null,
+            'passport_no'   =>  null,
+            'dob'   =>  null,
+            'address'   =>  null,
+            'role'  =>  1,
+            'status'    =>  1,
+            'otp_status'    =>  1
         ]);
     }
 }
