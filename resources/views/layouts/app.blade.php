@@ -24,7 +24,8 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="{{url('assets/css/app.css')}}">
     <link rel="shortcut icon" href="{{url('assets/images/favicon.svg')}}" type="image/x-icon">
-
+    <link rel="stylesheet" href="{{url('assets/css/style.css')}}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
@@ -60,6 +61,8 @@
     <script src="{{url('assets/vendors/simple-datatables/simple-datatables.js')}}"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script src="{{url('assets/js/pages/dashboard.js')}}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="{{url('assets/js/main.js')}}"></script>
     @stack('script')

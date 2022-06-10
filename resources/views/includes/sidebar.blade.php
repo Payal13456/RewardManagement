@@ -33,6 +33,9 @@
                         <li class="submenu-item ">
                             <a href="component-alert.html">Message to User</a>
                         </li>
+                        <li class="submenu-item ">
+                            <a href="component-alert.html">Referal Code</a>
+                        </li>
 
                     </ul>
                 </li>
@@ -43,7 +46,10 @@
                     </a>
                     <ul class="submenu ">
                         <li class="submenu-item ">
-                            <a href="component-alert.html">Category</a>
+                            <a href="{{URL::route('category')}}">Category</a>
+                        </li>
+                        <li class="submenu-item ">
+                            <a href="{{URL::route('vendor-create')}}">Add Vendor</a>
                         </li>
                         <li class="submenu-item ">
                             <a href="component-alert.html">Vendor List</a>

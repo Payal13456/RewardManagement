@@ -1,0 +1,9 @@
+
+.bg-danger:hover {
+    background-color: #dc3545!important;
+    color: #fff;
+}
+.bg-success:hover {
+    background-color: #198754!important;
+    color: #fff;
+}

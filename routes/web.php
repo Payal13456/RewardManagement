@@ -25,6 +25,15 @@ Route::group(['Prefix' => '/'], function () {
         
         Route::view('/users-list', 'user-list')->name('users-list');
         Route::get('/users-list/all', [App\Http\Controllers\PanelController::class, 'getAllUsersList'])->name('users-list-all');
+        Route::put('/users-list/{action}', [App\Http\Controllers\PanelController::class, 'userBlockUnblock'])->name('users-action');
+        
+        Route::view('/category', 'category')->name('category');
+        Route::post('/category/submit',[App\Http\Controllers\PanelController::class, 'createNewCategory'])->name('category-submit');
+        Route::get('/category-list/all', [App\Http\Controllers\PanelController::class, 'getAllCategoryList'])->name('category-list-all');
+        Route::delete('/category-list/delete', [App\Http\Controllers\PanelController::class, 'deleteSelectedCategory'])->name('category-list-delete');
+        Route::get('/category-list/edit', [App\Http\Controllers\PanelController::class, 'editSelectedCategory'])->name('category-list-edit');
+
+        Route::get('/vendor', [App\Http\Controllers\PanelController::class, 'createNewVendor'])->name('vendor-create');
 
     });
 });

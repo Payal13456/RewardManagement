@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{url('assets/vendors/bootstrap-icons/bootstrap-icons.css')}}">
     <link rel="stylesheet" href="{{url('assets/css/app.css')}}">
     <link rel="stylesheet" href="{{url('assets/css/pages/auth.css')}}">
+    
 </head>
 
 <body>

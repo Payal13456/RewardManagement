@@ -28,9 +28,6 @@
         </div>
         <section class="section">
             <div class="card">
-                {{-- <div class="card-header">
-                    Simple Datatable
-                </div> --}}
                 <div class="card-body">
                     <table class="table table-striped" id="user-list-tbl">
                         <thead>
@@ -42,6 +39,7 @@
                                 <th>Passport</th>
                                 <th>Address</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,9 +68,44 @@
                 {data: 'passport_no', name: 'passport_no', sClass:'text-wrap'},
                 {data: 'address', name: 'address', sClass:'text-wrap'},
                 {data: 'status', name: 'status', orderable: false, searchable: false},
-                // {data: 'action', name: 'action', orderable: false, searchable: false},
+                {data: 'process', name: 'process', orderable: false, searchable: false},
             ]
         });
+    });
+
+    $('body').on('click','.blockUnblockUser', function () {
+        var action = $(this).attr('data-action');
+        var id = $(this).attr('data-id');
+
+        swal({
+            title: "Are you sure, You want to "+action+" this user ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url : baseUrl+'/users-list/'+action,
+                    type: 'put',
+                    data: {action:action, id:id},
+                    success:function (re) {
+                        if (re.status === true) {
+                            swal(re.message, {
+                                icon: "success",
+                            });
+                            $('#user-list-tbl').DataTable().ajax.url(baseUrl+'/users-list/all').load();
+                        }
+                        else {
+                            swal(re.message);
+                        }
+                    }
+                });
+            }
+        })
     });
 </script>
 @endpush

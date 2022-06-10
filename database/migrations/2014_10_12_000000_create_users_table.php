@@ -25,7 +25,10 @@ return new class extends Migration
             $table->string('passport_no',45)->unique()->nullable();
             $table->date('dob')->nullable();
             $table->string('address')->nullable();
+            $table->integer('is_blocked')->nullable()->comment('0-no, 1-yes');
+            $table->string('referal_code',150)->nullable();
             $table->integer('role')->comment('1-admin, 2-user, 3-vendor')->nullable();
+            $table->string('fcm_token',255)->nullable();
             $table->integer('status')->default(2)->comment('0-block, 1-unblock, 2-active');
             $table->integer('otp')->nullable();
             $table->dateTime('otp_valid_from')->nullable();
