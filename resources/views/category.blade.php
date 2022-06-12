@@ -37,15 +37,26 @@
                     </div>
                     <div class="card-content">
                         <div class="card-body">
-                            <form class="form form-horizontal" action="{{URL::route('category-submit')}}" method="POST">
+                            <form class="form form-horizontal" action="{{URL::route('category-submit')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-body">
                                     <div class="row">
                                         <input type="hidden" name="editCategoryId" id="editCategoryId">
+                                        <input type="hidden" name="editCategoryImg" id="editCategoryImg">
                                         <label for="category_name" class="label-control col-md-4">Category Name <span class="text-danger">*</span></label>
                                         <div class="col-md-8 form-group">
                                             <input type="text" id="category_name" class="form-control @error('category_name') is-invalid @enderror" name="category_name" placeholder="Category Name" maxlength="50" autocomplete="off">
                                             @error('category_name')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <span>{{ $message }}</span>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        
+                                        <label for="category_img" class="label-control col-md-4">Category Image <span class="text-danger">*</span></label>
+                                        <div class="col-md-8 form-group">
+                                            <input type="file" id="category_img" class="form-control @error('category_img') is-invalid @enderror" name="category_img" autocomplete="off">
+                                            @error('category_img')
                                                 <span class="invalid-feedback" role="alert">
                                                     <span>{{ $message }}</span>
                                                 </span>
@@ -70,7 +81,7 @@
                     </div>
                     <div class="card-content">
                         <div class="card-body">
-                            <table class="table table-striped" id="category-list-tbl">
+                            <table class="table table-hover table-bordered" id="category-list-tbl">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -109,17 +120,6 @@
             ]
         });
     });
-
-    @if (Session::has('error'))
-        swal('{{ Session::get('error') }}', {
-            icon: "error",
-        });
-        
-    @elseif(Session::has('success'))
-        swal('{{ Session::get('success') }}', {
-            icon: "success",
-        });
-    @endif
 
     $('body').on('click','.remove-category', function () {
         var id = $(this).attr('data-id');
@@ -164,9 +164,12 @@
             type: 'get',
             data: {id:id},
             success:function (re) {
+                console.log(re);
                 if (re.status === true) {
                     $('#editCategoryId').val(re.data.id);
+                    $('#editCategoryImg').val(re.data.image);
                     $('#category_name').val(re.data.name);
+                    $('#category_img').val(re.data.image);
                 }
             }
         });

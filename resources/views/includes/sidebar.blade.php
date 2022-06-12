@@ -15,23 +15,23 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
 
-                <li class="sidebar-item active ">
+                <li class="sidebar-item {{Request::segment(1) === '/' ? 'active' : ''}}">
                     <a href="{{URL::route('/')}}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li class="sidebar-item  has-sub">
+                <li class="sidebar-item has-sub {{in_array(Request::segment(1), array('users-list','message-to-users')) ? 'active' : ''}}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person"></i>
                         <span>User</span>
                     </a>
                     <ul class="submenu ">
-                        <li class="submenu-item ">
+                        <li class="submenu-item {{Request::segment(1) === 'users-list' ? 'active' : ''}}">
                             <a href="{{URL::route('users-list')}}">List User</a>
                         </li>
-                        <li class="submenu-item ">
-                            <a href="component-alert.html">Message to User</a>
+                        <li class="submenu-item {{Request::segment(1) === 'message-to-users' ? 'active' : ''}}">
+                            <a href="{{URL::route('message-to-users')}}">Message to User</a>
                         </li>
                         <li class="submenu-item ">
                             <a href="component-alert.html">Referal Code</a>
@@ -39,25 +39,32 @@
 
                     </ul>
                 </li>
-                <li class="sidebar-item  has-sub">
+                <li class="sidebar-item  has-sub {{in_array(Request::segment(1), array('category','vendor','vendor-list')) ? 'active' : ''}}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person-badge"></i>
                         <span>Vendor</span>
                     </a>
                     <ul class="submenu ">
-                        <li class="submenu-item ">
+                        <li class="submenu-item {{Request::segment(1) === 'category' ? 'active' : ''}}">
                             <a href="{{URL::route('category')}}">Category</a>
                         </li>
-                        <li class="submenu-item ">
-                            <a href="{{URL::route('vendor-create')}}">Add Vendor</a>
+                        <li class="submenu-item {{Request::segment(1) === 'vendor' ? 'active' : ''}}">
+                            <a href="{{URL::route('vendor')}}">Add Vendor</a>
                         </li>
-                        <li class="submenu-item ">
-                            <a href="component-alert.html">Vendor List</a>
+                        <li class="submenu-item {{Request::segment(1) === 'vendor-list' ? 'active' : ''}}">
+                            <a href="{{URL::route('vendor-list')}}">Vendor List</a>
                         </li>
                         <li class="submenu-item ">
                             <a href="component-alert.html">Offers</a>
                         </li>
                     </ul>
+                </li>
+
+                <li class="sidebar-item {{Request::segment(1) === 'plans' ? 'active' : ''}}">
+                    <a href="{{URL::route('plans')}}" class='sidebar-link'>
+                        <i class="fa fa-tasks"></i>
+                        <span>Plan</span>
+                    </a>
                 </li>
 
                 <li class="sidebar-item ">
@@ -85,6 +92,13 @@
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-hexagon-fill"></i>
                         <span>Reedem Request</span>
+                    </a>
+                </li>
+                
+                <li class="sidebar-item">
+                    <a href="{{ URL::route('logout') }}" class='sidebar-link'>
+                        <i class="fa fa-sign-out"></i>
+                        <span>Logout</span>
                     </a>
                 </li>
 

@@ -26,6 +26,7 @@
     <link rel="shortcut icon" href="{{url('assets/images/favicon.svg')}}" type="image/x-icon">
     <link rel="stylesheet" href="{{url('assets/css/style.css')}}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
@@ -54,6 +55,7 @@
         var baseUrl = '{{url("")}}';
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="{{url('assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js')}}"></script>
     <script src="{{url('assets/js/bootstrap.bundle.min.js')}}"></script>
 
@@ -65,6 +67,23 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script src="{{url('assets/js/main.js')}}"></script>
+    <script> 
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        @if (Session::has('error'))
+            swal('{{ Session::get('error') }}', {
+                icon: "error",
+            });
+            
+        @elseif(Session::has('success'))
+            swal('{{ Session::get('success') }}', {
+                icon: "success",
+            });
+        @endif
+    </script>
     @stack('script')
+    
 </body>
 </html>

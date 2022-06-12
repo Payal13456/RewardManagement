@@ -7,3 +7,125 @@
     background-color: #198754!important;
     color: #fff;
 }
+.cursor-point {
+    cursor: pointer !important;
+}
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 1700px !important;
+    }
+}
+.details-modal>.content {
+    padding: 0 0.5rem;
+}
+.card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0 solid rgba(0,0,0,.125);
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgb(0 0 0 / 13%), 0 1px 3px rgb(0 0 0 / 20%);
+    margin-bottom: 1rem;
+}
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    padding: 0.75rem 1.25rem;
+    position: relative;
+    border-top-left-radius: 0.25rem;
+    border-top-right-radius: 0.25rem;
+}
+.card-body {
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+}
+.img-circle {
+    border-radius: 50%;
+}
+.profile-user-img {
+    border: 3px solid #adb5bd;
+    margin: 0 auto;
+    padding: 3px;
+    width: 100px;
+}
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+.profile-username {
+    font-size: 21px;
+    margin-top: 5px;
+}
+.text-muted {
+    color: #6c757d!important;
+}
+.list-group {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-left: 0;
+    margin-bottom: 0;
+    border-radius: 0.25rem;
+}
+.list-group-unbordered>.list-group-item {
+    border-left: 0;
+    border-radius: 0;
+    border-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+.nav {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+.nav-pills .nav-link {
+    border-radius: 0.25rem;
+}
+.nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+}
+.tab-content>.tab-pane.active {
+    display: block;
+}
+.tab-content>.tab-pane {
+    display: none;
+}
+.timeline {
+    margin: 0 0 45px;
+    padding: 0;
+    position: relative;
+}
+.timeline>div {
+    margin-bottom: 15px;
+    margin-right: 10px;
+    position: relative;
+}
+.multiple-field-btn {
+    padding: 0.175rem 0.55rem !important;
+}
+.input-group {
+    align-items: baseline !important;
+}
+.nav-pills .nav-link, .nav-pills .show>.nav-link {
+    color: #000;
+    background-color: #eeeeee;
+    border: 1px solid #fff;
+}
+.dataTables_length {
+    margin-bottom: 1rem !important;
+}

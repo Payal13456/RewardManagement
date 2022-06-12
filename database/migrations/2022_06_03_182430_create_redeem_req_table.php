@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('redeem_req', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->integer('is_approved')->nullable();
+            $table->integer('is_approved')->default(0)->comment('0-pending-aaproval, 1-approved, 2-reject');
             $table->decimal('amount',10,2)->nullable();
             $table->integer('status')->nullable();
             $table->timestamps();

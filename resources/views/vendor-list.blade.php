@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-    Users List | {{ config('app.name') }}
+    Vendor List | {{ config('app.name') }}
 @endsection
 
 @section('content')
@@ -14,14 +14,14 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
-                    <h3>Users List</h3>
+                    <h3>Vendor List</h3>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ URL::route('/') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="javascript:void(0)">User</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">User List</li>
+                            <li class="breadcrumb-item"><a href="javascript:void(0)">Vendor</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Vendor List</li>
                         </ol>
                     </nav>
                 </div>
@@ -58,7 +58,7 @@
         </section>
     </div>
 
-    <div class="modal fade" id="viewDetailsModal" role="dialog" aria-labelledby="viewDetailsModalTitle" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+    {{-- <div class="modal fade" id="viewDetailsModal" role="dialog" aria-labelledby="viewDetailsModalTitle" data-backdrop="static" data-keyboard="false" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -90,12 +90,12 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 @endsection
 @push('script')
     <script type="text/javascript">
         $(document).ready(function() {
-            var table = $('#user-list-tbl').DataTable({
+            var table = $('#vendor-list-tbl').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: baseUrl + '/users-list/all',
@@ -152,7 +152,7 @@
                 })
         });
 
-        $('body').on('click', '.viewDetailsUser', function() {
+        /*$('body').on('click', '.viewDetailsUser', function() {
             var userId = $(this).attr('data-id');
             var action = $(this).attr('data-action');            
             $.ajax({
@@ -312,6 +312,6 @@
                 }
             });
             $('#viewDetailsModal').modal('show');
-        });
+        });*/
     </script>
 @endpush

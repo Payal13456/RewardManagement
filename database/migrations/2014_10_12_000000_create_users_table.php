@@ -21,6 +21,8 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password',255)->nullable();
             $table->string('location',255)->nullable();
+            $table->string('latitude',100)->nullable();
+            $table->string('longitude',100)->nullable();
             $table->string('emirates_id',45)->unique()->nullable();
             $table->string('passport_no',45)->unique()->nullable();
             $table->date('dob')->nullable();

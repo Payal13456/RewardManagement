@@ -19,8 +19,8 @@ return new class extends Migration
             $table->bigInteger('plan_id')->unsigned();
             $table->string('transaction_id',255)->nullable();
             $table->date('expiry_date')->nullable();
-            $table->integer('is_expired')->nullable();
-            $table->integer('status')->nullable();
+            $table->integer('is_expired')->nullable()->comment('0-not-expired, 1-expired');
+            $table->integer('status')->nullable()->comment('1-active, 0-inactive');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
