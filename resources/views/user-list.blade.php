@@ -183,10 +183,10 @@
                                         '<b>DOB</b> <a class="float-end">'+re.userDt.dob+'</a>'+
                                     '</li>'+
                                     '<li class="list-group-item">'+
-                                        '<b>Emirates Id</b> <a class="float-end">'+re.userDt.emirates_id+'</a>'+
+                                        '<b>Emirates Id</b> <a class="float-end">--</a>'+
                                     '</li>'+
                                     '<li class="list-group-item">'+
-                                        '<b>Passport No</b> <a class="float-end">'+re.userDt.passport_no+'</a>'+
+                                        '<b>Passport No</b> <a class="float-end">--</a>'+
                                     '</li>'+
                                 '</ul>'+
                             '</div>'+
@@ -203,6 +203,9 @@
                                     '</li>'+
                                     '<li class="nav-item cursor-point" role="presentation">'+
                                         '<span class="nav-link" id="referral-history-tab" data-bs-toggle="pill" data-bs-target="#referral-history" role="tab" aria-controls="referral-history" aria-selected="false">Referral History</span>'+
+                                    '</li>'+
+                                    '<li class="nav-item cursor-point" role="presentation">'+
+                                        '<span class="nav-link" id="referral-history-tab" data-bs-toggle="pill" data-bs-target="#referral-history" role="tab" aria-controls="referral-history" aria-selected="false">Wallet</span>'+
                                     '</li>'+
                                 '</ul>'+
                             '</div>'+

@@ -55,7 +55,16 @@
                                             
                                             <div class="col-md-4">
                                                 <label for="mobile_no" class="label-control">Mobile No <span class="text-danger">*</span></label>
-                                                <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                <div class="input-group">
+                                                    <select name="mobile_no_code" id="mobile_no_code" class="select2 btn btn-light-secondary @error('mobile_no_code') is-invalid @enderror">
+                                                        @if(count($countryCode) > 0)
+                                                        @foreach($countryCode as $code)
+                                                        <option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
+                                                        @endforeach
+                                                        @endif
+                                                    </select>
+                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                </div>
                                                 @error('mobile_no')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -133,13 +142,12 @@
                                                 <span class="fa fa-minus mx-1 btn btn-danger btn-xs multiple-field-btn remove-multiple-mobile float-end mb-1"></span>
                                                 
                                                 <div class="input-group shop_mobile">
-                                                    <select name="category_id" id="category_id" class="btn btn-light-secondary @error('category_id') is-invalid @enderror dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <option value="91">+91</option>
-                                                        <option value="92">+92</option>
-                                                        <option value="93">+93</option>
-                                                        <option value="94">+94</option>
-                                                        <option value="95">+95</option>
-                                                        <option value="96">+96</option>
+                                                    <select name="shop_mob_code" id="shop_mob_code" class="select2 btn btn-light-secondary @error('shop_mob_code') is-invalid @enderror">
+                                                        @if(count($countryCode) > 0)
+                                                        @foreach($countryCode as $code)
+                                                        <option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
+                                                        @endforeach
+                                                        @endif
                                                     </select>
                                                     <input type="text" id="shop_mobile" class="mb-2 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="70" autocomplete="off">
                                                 </div>
@@ -213,8 +221,6 @@
 @endsection
 @push('script')
 <script>
-    $('.select2').select2();
-
     $(document).ready(function () {
         $('.remove-multiple-landline').css('display','none');
         $('.remove-multiple-mobile').css('display','none');
@@ -264,17 +270,17 @@
     $('body').on('click','.add-multiple-mobile', function () {
         if($('.shop_mobile').length < 5) {
             var mobileData = '<div class="input-group shop_mobile">'+
-                '<select name="category_id" id="category_id" class="btn btn-light-secondary @error('category_id') is-invalid @enderror dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">'+
-                    '<option value="91">+91</option>'+
-                    '<option value="92">+92</option>'+
-                    '<option value="93">+93</option>'+
-                    '<option value="94">+94</option>'+
-                    '<option value="95">+95</option>'+
-                    '<option value="96">+96</option>'+
+                '<select name="shop_mob_code" id="shop_mob_code" class="select2 btn btn-light-secondary @error('shop_mob_code') is-invalid @enderror">'+
+                    '@if(count($countryCode) > 0)'+
+                    '@foreach($countryCode as $code)'+
+                    '<option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>'+
+                    '@endforeach'+
+                    '@endif'+
                 '</select>'+
                 '<input type="text" id="shop_mobile" class="mb-2 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="70" autocomplete="off">'+
             '</div>';
             $('body').find('.shop_mobile:last').after(mobileData);
+            $('.select2').select2();
         }
         if($('.shop_mobile').length == 1) { $('.remove-multiple-mobile').css('display','none');} else {$('.remove-multiple-mobile').css('display','block');}
         if($('.shop_mobile').length >= 5) { $('.add-multiple-mobile').css('display','none');} else {$('.add-multiple-mobile').css('display','block');}

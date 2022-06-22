@@ -86,6 +86,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Category Name</th>
+                                        <th>Image</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -115,6 +116,7 @@
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'name', name: 'name', sClass:'text-wrap'},
+                {data: 'image', name: 'image', sClass:'text-wrap'},
                 {data: 'status', name: 'status', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]

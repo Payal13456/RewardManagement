@@ -41,9 +41,20 @@ Route::group(['Prefix' => '/'], function () {
         Route::get('/message-to-users',[App\Http\Controllers\PanelController::class, 'messageToUsersList'])->name('message-to-users');
         Route::post('/message-to-users/submit',[App\Http\Controllers\PanelController::class, 'messageToUsersSubmit'])->name('message-to-user-submit');
 
-        Route::view('/plans', 'plans')->name('plans');
-        Route::get('/plan-list/all', [App\Http\Controllers\PanelController::class, 'getAllPlanList'])->name('plan-list');
-        Route::post('/plan-submit', [App\Http\Controllers\PanelController::class, 'createNewPlanSubmit'])->name('plan-submit');
+        Route::view('/subscription-plans', 'subscription-plans')->name('subscription-plans');
+        Route::get('/subscription-plans/list', [App\Http\Controllers\PanelController::class, 'getAllSubscriptionPlanList'])->name('subscription-plans-list');
+        Route::post('/subscription-plans/submit', [App\Http\Controllers\PanelController::class, 'createNewSubscriptionPlanSubmit'])->name('subscription-plans-submit');
+        Route::delete('/subscription-plans/delete', [App\Http\Controllers\PanelController::class, 'deleteSelectedSubscriptionPlan'])->name('subscription-plans-delete');
+        Route::get('/subscription-plans/edit', [App\Http\Controllers\PanelController::class, 'editSelectedSubscriptionPlan'])->name('subscription-plans-edit');
+
+        Route::get('/offers', [App\Http\Controllers\PanelController::class, 'createNewOffers'])->name('offers');
+        Route::get('/offers/list', [App\Http\Controllers\PanelController::class, 'getAllOffersList'])->name('offers-list');
+        Route::post('/offers/submit', [App\Http\Controllers\PanelController::class, 'newOffersDetailSubmit'])->name('offers-submit');
+
+        Route::view('/reedem-request', 'reedem-request')->name('reedem-request');
+        Route::get('/reedem-request/list', [App\Http\Controllers\PanelController::class, 'getReedemRequestList'])->name('reedem-request-list');
+        Route::put('/reedem-request/action', [App\Http\Controllers\PanelController::class, 'reedemRequestAction'])->name('reedem-request-action');
+
 
     });
 });

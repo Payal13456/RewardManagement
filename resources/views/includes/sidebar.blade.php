@@ -39,7 +39,7 @@
 
                     </ul>
                 </li>
-                <li class="sidebar-item  has-sub {{in_array(Request::segment(1), array('category','vendor','vendor-list')) ? 'active' : ''}}">
+                <li class="sidebar-item  has-sub {{in_array(Request::segment(1), array('category','vendor','vendor-list','offers')) ? 'active' : ''}}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person-badge"></i>
                         <span>Vendor</span>
@@ -54,23 +54,16 @@
                         <li class="submenu-item {{Request::segment(1) === 'vendor-list' ? 'active' : ''}}">
                             <a href="{{URL::route('vendor-list')}}">Vendor List</a>
                         </li>
-                        <li class="submenu-item ">
-                            <a href="component-alert.html">Offers</a>
+                        <li class="submenu-item {{Request::segment(1) === 'offers' ? 'active' : ''}}">
+                            <a href="{{URL::route('offers')}}">Offers</a>
                         </li>
                     </ul>
                 </li>
 
-                <li class="sidebar-item {{Request::segment(1) === 'plans' ? 'active' : ''}}">
-                    <a href="{{URL::route('plans')}}" class='sidebar-link'>
+                <li class="sidebar-item {{Request::segment(1) === 'subscription-plans' ? 'active' : ''}}">
+                    <a href="{{URL::route('subscription-plans')}}" class='sidebar-link'>
                         <i class="fa fa-tasks"></i>
-                        <span>Plan</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item ">
-                    <a href="index.html" class='sidebar-link'>
-                        <i class="bi bi-stack"></i>
-                        <span>Subsctiption</span>
+                        <span>Subsctiption Plan</span>
                     </a>
                 </li>
                 
@@ -88,8 +81,8 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item">
-                    <a href="#" class='sidebar-link'>
+                <li class="sidebar-item {{Request::segment(1) === 'reedem-request' ? 'active' : ''}}">
+                    <a href="{{URL::route('reedem-request')}}" class='sidebar-link'>
                         <i class="bi bi-hexagon-fill"></i>
                         <span>Reedem Request</span>
                     </a>

@@ -10,6 +10,9 @@ use App\Models\Subscription;
 use App\Models\Redemption;
 use App\Models\ReferalBonus;
 use App\Models\Notification;
+use App\Models\CountryCode;
+use App\Models\Vendors;
+use App\Models\Offers;
 use DataTables;
 use Illuminate\Validation\Validator;
 
@@ -30,6 +33,14 @@ class PanelController extends Controller
                     $location = $row->location.', <br>lat : '.$row->latitude.', long : '.$row->longitude;
                     return $location;
                 })
+                ->addColumn('mobile_no', function($row){
+                    $mobileNo = '+'.$row->phone_code.'-'.$row->mobile_no;
+                    return $mobileNo;
+                })
+                ->addColumn('dob', function($row){
+                    $dob = date('d-m-Y', strtotime($row->dob));
+                    return $dob;
+                })
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-success">Active</span>';
                     if($row->status == 0) {
@@ -39,22 +50,22 @@ class PanelController extends Controller
                 })
                 ->addColumn('process', function($row){
                     $action = '<span class="badge bg-danger blockUnblockUser cursor-point" data-action="block" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Block User">
-                        <i class="fa fa-ban"></i>
+                        Block
                     </span> &nbsp;&nbsp; 
                     <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
-                        <i class="fa fa-street-view"></i>
+                        View
                     </span>';
                     if($row->status == 0) {
                         $action = '<span class="badge bg-success blockUnblockUser cursor-point" data-action="unblock" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock User">
-                            <i class="fa fa-unlock"></i>
+                            Unblock
                         </span> &nbsp;&nbsp;
                         <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
-                            <i class="fa fa-street-view"></i>
+                            View
                         </span>';
                     }
                     return $action;
                 })
-                ->rawColumns(['location','status','process'])
+                ->rawColumns(['location','dob','mobile_no','status','process'])
                 ->make(true);
         }
     }
@@ -138,12 +149,19 @@ class PanelController extends Controller
                     }
                     return $status;
                 })
+                ->addColumn('image', function($row){
+                    $image = '--';
+                    if($row->image !== NULL) {
+                        $image = '<a href="'.Categories::getCategoryImagePath($row->image).'" target="_blank">'.$row->image.'</a>';
+                    }
+                    return $image;
+                })
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="remove-category" data-id="'.$row->id.'" ><i class="bi bi-trash text-danger"></i></a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="edit-category" data-id="'.$row->id.'" ><i class="bi bi-pencil-square text-primary"></i></a>';
                     return $action;
                 })
-                ->rawColumns(['status','action'])
+                ->rawColumns(['status','action','image'])
                 ->make(true);
         }
     }
@@ -175,7 +193,9 @@ class PanelController extends Controller
     public function createNewVendor (Request $request)
     {
         $cate = Categories::where('status',1)->get();
-        return view ('vendor-create')->with('category',$cate);
+        $countryCode = CountryCode::select('phone_code')->groupBy('phone_code')->orderBy('phone_code','ASC')->get();
+        
+        return view ('vendor-create')->with('category',$cate)->with('countryCode',$countryCode);
     }
 
     public function getUsersAllDetails(Request $request)
@@ -259,7 +279,7 @@ class PanelController extends Controller
         }
     }
 
-    public function getAllPlanList (Request $request)
+    public function getAllSubscriptionPlanList (Request $request)
     {
         if ($request->ajax()) {
             $data = Plans::latest()->get();
@@ -273,8 +293,8 @@ class PanelController extends Controller
                     return $status;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="remove-category" data-id="'.$row->id.'" ><i class="bi bi-trash text-danger"></i></a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="edit-category" data-id="'.$row->id.'" ><i class="bi bi-pencil-square text-primary"></i></a>';
+                    $action = '<a href="javascript:void(0)" class="remove-plans" data-id="'.$row->id.'" ><i class="bi bi-trash text-danger"></i></a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="edit-plans" data-id="'.$row->id.'" ><i class="bi bi-pencil-square text-primary"></i></a>';
                     return $action;
                 })
                 ->rawColumns(['status','action'])
@@ -282,7 +302,7 @@ class PanelController extends Controller
         }
     }
 
-    public function createNewPlanSubmit (Request $request)
+    public function createNewSubscriptionPlanSubmit (Request $request)
     {
         $request->validate([
             'plan_name'     =>  'required|string',
@@ -298,26 +318,225 @@ class PanelController extends Controller
             'plan_total.required'   =>  'Total amount should not be blank.'
         ]);
         try {
-            $planArr = array(
-                'name'          =>  $request->plan_name,
-                'validity'      =>  $request->plan_validity,
-                'amount'        =>  $request->plan_amount,
-                'tax'           =>  $request->plan_tax,
-                'total'         =>  $request->plan_total,
-                'status'        =>  1,
-                'created_at'    =>  date('Y-m-d H:i:s'),
-                'updated_at'    =>  date('Y-m-d H:i:s')
-            );
-            if(Plans::insert($planArr)) {
-                return back()->with('success','Plan added successfully.');
-            }
+            if(empty($request->editPlansId)) {
+                $planArr = array(
+                    'name'          =>  ucwords($request->plan_name),
+                    'validity'      =>  $request->plan_validity,
+                    'amount'        =>  $request->plan_amount,
+                    'tax'           =>  $request->plan_tax,
+                    'total'         =>  $request->plan_total,
+                    'status'        =>  1,
+                    'created_at'    =>  date('Y-m-d H:i:s'),
+                    'updated_at'    =>  date('Y-m-d H:i:s')
+                );
+                if(Plans::insert($planArr)) {
+                    return back()->with('success','Plan added successfully.');
+                }
+                else {
+                    return back()->with('error','Failed to add Plan, Try again.');
+                }
+            } 
             else {
-                return back()->with('error','Failed to add Plan, Try again.');
+                $planArr = array(
+                    'name'          =>  ucwords($request->plan_name),
+                    'validity'      =>  $request->plan_validity,
+                    'amount'        =>  $request->plan_amount,
+                    'tax'           =>  $request->plan_tax,
+                    'total'         =>  $request->plan_total,
+                    'updated_at'    =>  date('Y-m-d H:i:s')
+                );
+                if(Plans::where('id',$request->editPlansId)->update($planArr)) {
+                    return back()->with('success','Plan updated successfully.');
+                }
+                else {
+                    return back()->with('error','Failed to update Plan, Try again.');
+                }
             }
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
     }
+
+    public function editSelectedSubscriptionPlan (Request $request)
+    {
+        $plan = Plans::find($request->id);
+        if($plan) {
+            return (['status' => true, 'message' => 'Record found.', 'data'=>$plan]);
+        }
+        return (['status' => false, 'message' => 'No Record found.', 'data'=>[] ]);
+    }
+
+    public function deleteSelectedSubscriptionPlan (Request $request)
+    {
+        $plan = Plans::find($request->id);
+        if($plan) {
+            $currDate = date('Y-m-d');
+            $sub = Subscription::where('plan_id',$request->id)->where('expiry_date','>=',$currDate)->count();
+            if($sub == 0) {
+                $plan->delete();
+                return (['status' => true, 'message' => 'Subscription Plan deleted successfully.']);
+            }
+            else if($sub > 0) {
+                return (['status' => false, 'message' => 'Unable to delete this Subscription Plan. '.$sub.' Users are subscribed with this plan.']);
+            }
+        }
+        return (['status' => false, 'message' => 'Failed to delete Subscription Plan.']);
+    }
+
+    public function createNewOffers (Request $request) 
+    {
+        $vendor = Vendors::select('id','shop_name','name')->where('status',1)->where('is_blocked',1)->get();
+        return view('offers')->with('vendor',$vendor);
+    }
+
+    public function newOffersDetailSubmit (Request $request)
+    {
+        $request->validate([
+            'vendor_id'         =>  'required',
+            'start_date'        =>  'required',
+            'end_date'          =>  'required',
+            'offer_description' =>  'required'
+        ],[
+            'vendor_id.required'    =>  'Please select any one Vendor',
+            'start_date.required'   =>  'Please select offer start date',
+            'end_date.required'     =>  'Please select offer end date',
+            'offer_description.required'     =>  'Please enter offer description',
+        ]);
+        try {
+            if(empty($request->editOffersId)) {
+                if($request->end_date >= $request->start_date) {
+                    if(Offers::insert([
+                        'vendor_id'     =>  $request->vendor_id,
+                        'offer_desc'    =>  ucfirst($request->offer_description),
+                        'start_date'    =>  date('Y-m-d', strtotime($request->start_date)),
+                        'end_date'      =>  date('Y-m-d', strtotime($request->end_date)),
+                        'status'        =>  1,
+                        'created_at'    =>  date('Y-m-d H:i:s'),
+                        'updated_at'    =>  date('Y-m-d H:i:s')	
+                    ])) {
+                        return back()->with('success','Offers added successfully.');
+                    } 
+                    else {
+                        return back()->with('error','Failed to add Offers, Try again.');
+                    }
+                }
+                else {
+                    return back()->with('error','Offer end date should be equal to or greater than start date.');
+                }
+            }
+            else {
+                if($request->end_date >= $request->start_date) {
+                    if(Offers::where('id',$request->editOffersId)->update([
+                        'vendor_id'     =>  $request->vendor_id,
+                        'offer_desc'    =>  ucfirst($request->offer_description),
+                        'start_date'    =>  date('Y-m-d', strtotime($request->start_date)),
+                        'end_date'      =>  date('Y-m-d', strtotime($request->end_date)),
+                        'status'        =>  1,
+                        'created_at'    =>  date('Y-m-d H:i:s'),
+                        'updated_at'    =>  date('Y-m-d H:i:s')	
+                    ])) {
+                        return back()->with('success','Offer updated successfully.');
+                    } 
+                    else {
+                        return back()->with('error','Failed to update Offer, Try again.');
+                    }
+                }
+                else {
+                    return back()->with('error','Offer end date should be equal to or greater than start date.');
+                }
+            }
+        } catch (\Exception $e) {
+            return back()->with('error',$e->getMessage());
+        }
+    }
+    
+    public function getAllOffersList (Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Offers::select('offers.id','offers.vendor_id','vendor.shop_name','offers.offer_desc','offers.start_date','offers.end_date','offers.status')
+                    ->join('vendor','offers.vendor_id','=','vendor.id')
+                    ->orderBy('offers.id','desc')->get();
+            // echo "<pre>";
+            // print_r($data);
+            // exit();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('status', function($row){
+                    $status = '<span class="badge bg-success">Active</span>';
+                    if($row->status == 0) {
+                        $status = '<span class="badge bg-danger">Inactive</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('start_date', function($row){
+                    $startDate = date('d-m-Y',strtotime($row->start_date));
+                    return $startDate;
+                })
+                ->addColumn('end_date', function($row){
+                    $endDate = date('d-m-Y',strtotime($row->end_date));
+                    return $endDate;
+                })
+                ->addColumn('action', function($row){
+                    $action = '<a href="javascript:void(0)" class="remove-plans" data-id="'.$row->id.'" ><i class="bi bi-trash text-danger"></i></a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="edit-plans" data-id="'.$row->id.'" ><i class="bi bi-pencil-square text-primary"></i></a>';
+                    return $action;
+                })
+                ->rawColumns(['status','start_date','end_date','action'])
+                ->make(true);
+        }
+    }
+    
+    public function getReedemRequestList (Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Redemption::select('redeem_req.id','redeem_req.user_id','users.name as username','redeem_req.is_approved','redeem_req.amount','redeem_req.status')
+                    ->join('users','redeem_req.user_id','=','users.id')
+                    ->where('redeem_req.is_approved',0)
+                    ->orderBy('redeem_req.id','desc')->get();
+                    
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('status', function($row){
+                    $status = '<span class="badge bg-warning">Active</span>';
+                    if($row->status == 0) {
+                        $status = '<span class="badge bg-danger">Inactive</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('action', function($row){
+                    $action = '<a href="javascript:void(0)" class="action-request badge bg-success" data-action="approve" data-id="'.$row->id.'" >Approve</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" >Reject</a>';
+                    return $action;
+                })
+                ->rawColumns(['status','action'])
+                ->make(true);
+        }
+    }
+
+    public function reedemRequestAction (Request $request)
+    {
+        try {
+            $action = 2;
+            if($request->action == 'approve') { $action = 1; }
+
+            if(Redemption::where('id', $request->actionId)->update([
+                'is_approved'   =>  $action,
+                'updated_at'    =>  date('Y-m-d H:i:s')
+            ])) {
+                return ['status' => true, 'message' => 'Reedem Request has been '.$request->action.'ed'];
+            }
+            else {
+                return ['status' => false, 'message' => 'Failed to '.$request->action.' payment, Try again'];
+            }
+        } 
+        catch (\Exception $e) {
+            return ['status' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+
+
+
 
 
 }

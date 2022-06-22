@@ -26,8 +26,8 @@ return new class extends Migration
             $table->string('location',100)->nullable();
             $table->string('lat',100)->nullable();
             $table->string('long',100)->nullable();
-            $table->integer('status')->nullable();
-            $table->integer('is_blocked')->nullable();
+            $table->integer('status')->nullable()->comment('0-inactive, 1-active');
+            $table->integer('is_blocked')->nullable()->comment('0-block, 1-unblock');
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');

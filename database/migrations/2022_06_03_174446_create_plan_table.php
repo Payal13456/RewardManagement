@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('validity',100)->nullable();
             $table->decimal('amount',10,2)->nullable();
             $table->decimal('tax',10,2)->nullable();
-            $table->string('total',100)->nullable();
+            $table->decimal('total',10,2)->nullable();
             $table->integer('status')->nullable();
             $table->timestamps();
         });

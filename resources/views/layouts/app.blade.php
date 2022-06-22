@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="{{url('assets/css/style.css')}}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
@@ -40,11 +41,11 @@
             <footer>
                 <div class="footer clearfix mb-0 text-muted">
                     <div class="float-start">
-                        <p>2021 &copy; Mazer</p>
+                        <p>{{date('Y')}} &copy; {{config('app.name')}}</p>
                     </div>
                     <div class="float-end">
-                        <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="http://ahmadsaugi.com">A. Saugi</a></p>
+                        <p>Developed by <span class="text-danger"><i class="bi bi-heart"></i></span> <a
+                                href="https://tryambaka.com/" target="_blank">Tryambaka Techno Solutions</a></p>
                     </div>
                 </div>
             </footer>
@@ -65,20 +66,26 @@
     <script src="{{url('assets/js/pages/dashboard.js')}}"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <script src="{{url('assets/js/main.js')}}"></script>
     <script> 
+        $('.select2').select2();
+        
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         });
         @if (Session::has('error'))
-            swal('{{ Session::get('error') }}', {
+            swal({
+                title: '{{ Session::get('error') }}',
                 icon: "error",
             });
             
         @elseif(Session::has('success'))
-            swal('{{ Session::get('success') }}', {
+            swal({
+                title: '{{ Session::get('success') }}',
                 icon: "success",
             });
         @endif

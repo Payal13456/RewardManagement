@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title') Plan | {{ config('app.name') }} @endsection
+@section('title') Subscription Plan | {{ config('app.name') }} @endsection
 
 @section('content')
 
@@ -29,14 +29,14 @@
     <!-- Basic Horizontal form layout section start -->
     <section id="basic-horizontal-layouts">
         <div class="row match-height">
-            <div class="col-md-4 col-12">
+            <div class="col-md-5 col-12">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Add Plans</h4>
                     </div>
                     <div class="card-content">
                         <div class="card-body">
-                            <form class="form form-horizontal" action="{{URL::route('category-submit')}}" method="POST">
+                            <form class="form form-horizontal" action="{{URL::route('subscription-plans-submit')}}" method="POST">
                                 @csrf
                                 <div class="form-body">
                                     <div class="row">
@@ -52,9 +52,9 @@
                                             @enderror
                                         </div>
                                             
-                                        <label for="plan_validity" class="col-md-4 label-control">Plan Validity <span class="text-danger">*</span></label>
+                                        <label for="plan_validity" class="col-md-4 label-control">Plan Validity <span class="text-danger">*</span> <small>(in days)</small> </label>
                                         <div class="col-md-8 form-group">
-                                            <input type="text" id="plan_validity" class="form-control @error('plan_validity') is-invalid @enderror" name="plan_validity" placeholder="Plan Validity" maxlength="15" autocomplete="off">
+                                            <input type="text" id="plan_validity" class="form-control @error('plan_validity') is-invalid @enderror" name="plan_validity" placeholder="Plan Validity (in days)" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                             @error('plan_validity')
                                                 <span class="invalid-feedback" role="alert">
                                                     <span>{{ $message }}</span>
@@ -64,7 +64,7 @@
                                         
                                         <label for="plan_amount" class="col-md-4 label-control">Amount <span class="text-danger">*</span></label>
                                         <div class="col-md-8 form-group">
-                                            <input type="text" id="plan_amount" class="form-control @error('plan_amount') is-invalid @enderror" name="plan_amount" placeholder="Plan Amount" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                            <input type="text" id="plan_amount" class="calsTotal form-control @error('plan_amount') is-invalid @enderror" name="plan_amount" placeholder="Plan Amount" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="0">
                                             @error('plan_amount')
                                                 <span class="invalid-feedback" role="alert">
                                                     <span>{{ $message }}</span>
@@ -72,9 +72,9 @@
                                             @enderror
                                         </div>
                                         
-                                        <label for="plan_tax" class="col-md-4 label-control">Tax (in digit) <span class="text-danger">*</span></label>
+                                        <label for="plan_tax" class="col-md-4 label-control">Tax <span class="text-danger">*</span> <small>(in digits)</small> </label>
                                         <div class="col-md-8 form-group">
-                                            <input type="text" id="plan_tax" class="form-control @error('plan_tax') is-invalid @enderror" name="plan_tax" placeholder="Tax (in digit)" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                            <input type="text" id="plan_tax" class="calsTotal form-control @error('plan_tax') is-invalid @enderror" name="plan_tax" placeholder="Tax (in digit)" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="0">
                                             @error('plan_tax')
                                                 <span class="invalid-feedback" role="alert">
                                                     <span>{{ $message }}</span>
@@ -102,7 +102,7 @@
                 </div>
             </div>
 
-            <div class="col-md-8 col-12">
+            <div class="col-md-7 col-12">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Plans List</h4>
@@ -110,7 +110,7 @@
                     <div class="card-content">
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-hover table-bordered" id="user-list-tbl">
+                                <table class="table table-hover table-bordered" id="subscription-plan-tbl">
                                     <thead class="text-nowrap">
                                         <tr>
                                             <th>#</th>
@@ -139,10 +139,10 @@
 @push('script')
     <script type="text/javascript">
         $(document).ready(function() {
-            var table = $('#user-list-tbl').DataTable({
+            var table = $('#subscription-plan-tbl').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: baseUrl + '/plan-list/all',
+                ajax: baseUrl + '/subscription-plans/list',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                     { data: 'name', name: 'name' },
@@ -153,6 +153,77 @@
                     { data: 'status', name: 'status', orderable: false, searchable: false  },
                     { data: 'action', name: 'action', orderable: false, searchable: false },
                 ]
+            });
+        });
+
+        $(document).on('keyup','.calsTotal',function () {
+            var totalAmt = 0;
+            var planAmt = $('#plan_amount').val();
+            var planTax = $('#plan_tax').val();
+            if(planAmt > 0) {
+                totalAmt = (parseInt(planAmt) + parseInt(planTax));
+            }
+            $('#plan_total').val(totalAmt).attr('readonly','readonly');
+        });
+
+        $('body').on('click','.remove-plans', function () {
+            var id = $(this).attr('data-id');
+            swal({
+                title: "Are you sure, You want to delete this Plan ?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url : baseUrl+'/subscription-plans/delete',
+                        type: 'delete',
+                        data: {id:id},
+                        success:function (re) {
+                            if (re.status === true) {
+                                swal(re.message, {
+                                    icon: "success",
+                                });
+                                $('#subscription-plan-tbl').DataTable().ajax.url(baseUrl+'/subscription-plans/list').load();
+                            }
+                            else {
+                                swal({
+                                    title: re.message,
+                                    icon: "warning",
+                                    // buttons: true,
+                                    // dangerMode: true,
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $('body').on('click','.edit-plans', function () {
+            var id = $(this).attr('data-id');
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                url : baseUrl+'/subscription-plans/edit',
+                type: 'get',
+                data: {id:id},
+                success:function (re) {
+                    console.log(re);
+                    if (re.status === true) {
+                        $('#editPlansId').val(re.data.id);
+                        $('#plan_name').val(re.data.name);
+                        $('#plan_validity').val(re.data.validity);
+                        $('#plan_amount').val(re.data.amount);
+                        $('#plan_tax').val(re.data.tax);
+                        $('#plan_total').val(re.data.total);
+                    }
+                }
             });
         });
     </script>
