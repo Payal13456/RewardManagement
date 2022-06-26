@@ -11,8 +11,12 @@ use App\Models\Redemption;
 use App\Models\ReferalBonus;
 use App\Models\Notification;
 use App\Models\CountryCode;
-use App\Models\Vendors;
 use App\Models\Offers;
+use App\Models\Vendors;
+use App\Models\ShopEmail;
+use App\Models\ShopLandline;
+use App\Models\ShopMobileNo;
+use App\Models\shopCoverImage;
 use DataTables;
 use Illuminate\Validation\Validator;
 
@@ -196,6 +200,194 @@ class PanelController extends Controller
         $countryCode = CountryCode::select('phone_code')->groupBy('phone_code')->orderBy('phone_code','ASC')->get();
         
         return view ('vendor-create')->with('category',$cate)->with('countryCode',$countryCode);
+    }
+
+    public function submitNewVendorDetails (Request $request)
+    {
+        $request->validate([
+            'name'              =>  'required|string',
+            'mobile_no_code'    =>  'required',
+            'mobile_no'         =>  'required',
+            'email'             =>  'required|unique:vendor,email',
+            'category_id'       =>  'required',
+            'shop_name'         =>  'required',
+            'shop_website'      =>  'required|url',
+            'shop_landline_code'=>  'required',
+            'shop_landline'     =>  'required',
+            'shop_mob_code'     =>  'required',
+            'shop_mobile'       =>  'required',
+            'shop_email'        =>  'required',  
+            'location'          =>  'required',
+            'latitude'          =>  'required',
+            'longitude'         =>  'required',
+            'cover_img'         =>  'required',
+            'shop_logo'         =>  'required',
+            'description'       =>  'required',
+        ], [
+            'name.required'     =>  'Vendor name must be required.',
+            'mobile_no_code.required'   =>  'Mobile Phone code must be required.',
+            'mobile_no.required'    =>  'Mobile Number must be required.',
+            'email.required'     =>  'Email must be required.',
+            'category_id.required'  =>  'Please select Category Id.',
+            'shop_name.required'    =>  'Shop Name must be required.',
+            'shop_website.required' =>  'Shop website url must be required.',
+            'shop_website.url'      =>  'Website url must be in valide url formt.',
+            'shop_landline_code.required'   =>  'Landline Phone code must be required.',
+            'shop_landline.required'    =>  'Landline must be required.',
+            'shop_mob_code.required'    =>  'Mobile Phone code must be required.',
+            'shop_mobile.required'      =>  'Mobile Number must be required.',
+            'shop_email.required'       =>  'Shop Email must be required.',  
+            'location.required'         =>  'Location must be required.',
+            'latitude.required'         =>  'Location latitude must be required.',
+            'longitude.required'        =>  'Location longitude must be required.',
+            'cover_img.required'        =>  'Cover Image must be required.',
+            'shop_logo.required'        =>  'Shop Logo must be required.',
+            'description.required'      =>  'Short Description must be required.',
+        ]);
+        try {
+            \DB::beginTransaction();
+            $shopLogo = null;
+            if($request->hasFile('shop_logo')) {
+                $shopLogo = \Str::random().'.'.time().'.'.$request->shop_logo->getClientOriginalExtension();
+                $request->shop_logo->move(public_path('/uploads/shop/logo/'), $shopLogo);
+            }
+            $detailArr = array(
+                'name'      =>  ucwords($request->name),
+                'phone_code'=>  $request->mobile_no_code,
+                'mobile_no' =>  $request->mobile_no,
+                'email'     =>  $request->email,
+                'shop_name' =>  ucwords($request->shop_name),
+                'website'   =>  $request->shop_website,
+                'description'   =>  $request->name,
+                'category_id'   =>  $request->category_id,
+                'location'  =>  $request->location,
+                'lat'       =>  $request->latitude,
+                'long'      =>  $request->longitude,
+                'shop_logo' =>  $shopLogo,
+                'description' =>  $request->description,
+                'status'    =>  1,
+                'is_blocked'=>  1,
+                'created_at'    =>  date('Y-m-d H:i:s'),
+                'updated_at'    =>  date('Y-m-d H:i:s'),
+            );
+            $vendorId = Vendors::insertGetId($detailArr);
+            if($vendorId) {
+                if(count($request->cover_img) > 0) {
+                    for($x=0; $x<count($request->cover_img); $x++) {
+                        $shopCoverLogo = null;
+                        if(!empty($request->cover_img[$x])) {
+                            if($request->hasFile('cover_img')) {
+                                $shopCoverLogo = \Str::random().'.'.time().'.'.$request->cover_img[$x]->getClientOriginalExtension();
+                                $request->cover_img[$x]->move(public_path('/uploads/shop/cover/'), $shopCoverLogo);
+                            }
+                            $coverImgArr = array(
+                                'vendor_id' =>  $vendorId,
+                                'cover_image'   =>  $shopCoverLogo,
+                                'status'    =>  1,
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s'),
+                            );
+                            shopCoverImage::insert($coverImgArr);
+                        }
+                    }
+                }
+                if(count($request->shop_landline) > 0) {
+                    for($i=0; $i<count($request->shop_landline); $i++) {
+                        if(!empty($request->shop_landline[$i])) {
+                            $landLineArr = array(
+                                'vendor_id' =>  $vendorId,
+                                'phone_code'    =>  $request->shop_landline_code[$i],
+                                'landline_no'   =>  $request->shop_landline[$i],
+                                'status'    =>  1,
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s'),
+                            );
+                            ShopLandline::insert($landLineArr);
+                        }
+                    }
+                }
+                if(count($request->shop_mobile) > 0) {
+                    for($j=0; $j<count($request->shop_mobile); $j++) {
+                        if(!empty($request->shop_mobile[$j])) {
+                            $mobileArr = array(
+                                'vendor_id' =>  $vendorId,
+                                'phone_code'    =>  $request->shop_mob_code[$j],
+                                'mobile_no'    =>  $request->shop_mobile[$j],
+                                'status'    =>  1,
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s'),
+                            );
+                            ShopMobileNo::insert($mobileArr);
+                        }
+                    }
+                }
+                if(count($request->shop_email) > 0) {
+                    for($a=0; $a<count($request->shop_email); $a++) {
+                        if(!empty($request->shop_email[$a])) {
+                            $emailArr = array(
+                                'vendor_id' =>  $vendorId,
+                                'shop_email'   =>  $request->shop_email[$a],
+                                'status'    =>  1,
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s'),
+                            );
+                            ShopEmail::insert($emailArr);
+                        }
+                    }
+                }
+                \DB::commit();
+                return back()->with('success','Vendor Details added successfully.');
+            }
+            else {
+                return back()->with('error','Failed to add Vendor Details.');
+            }
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return back()->with('error',$e->getMessage());
+        }
+    }
+
+    public function getAllVendorList (Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Vendors::select('vendor.name','vendor.phone_code','vendor.mobile_no','vendor.email','vendor.shop_name','vendor.website','categories.name as cate_name','vendor.location','vendor.lat','vendor.long','vendor.status','vendor.is_blocked')
+                    ->join('categories','vendor.category_id','=','categories.id')
+                    ->orderBy('vendor.id','desc')
+                    ->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('status', function($row){
+                    $status = '<span class="badge bg-warning">Active</span>';
+                    if($row->status == 0) {
+                        $status = '<span class="badge bg-danger">Inactive</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('mobileNo', function($row){
+                    $mobileNo = '<center>--</center>';
+                    if(!empty($row->mobile_no)) { $mobileNo = '+'.$row->phone_code.'-'.$row->mobile_no; }
+                    return $mobileNo;
+                })
+                ->addColumn('website', function($row){
+                    $website = '<center>--</center>';
+                    if(!empty($row->website)) { $website = '<a href="'.$row->website.'" target="_blank">'.$row->website.'</a>'; }
+                    return $website;
+                })
+                ->addColumn('location', function($row){
+                    $location = '<center>--</center>';
+                    if(!empty($row->location)) {
+                        $location = $row->location.', <br>lat : '.$row->lat.', long : '.$row->long;
+                    }
+                    return $location;
+                })
+                ->addColumn('action', function($row){
+                    $action = '<a href="javascript:void(0)" class="action-request badge bg-success" data-action="approve" data-id="'.$row->id.'" >Approve</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" >Reject</a>';
+                    return $action;
+                })
+                ->rawColumns(['website','location','status','mobileNo','action'])
+                ->make(true);
+        }
     }
 
     public function getUsersAllDetails(Request $request)
@@ -492,8 +684,7 @@ class PanelController extends Controller
             $data = Redemption::select('redeem_req.id','redeem_req.user_id','users.name as username','redeem_req.is_approved','redeem_req.amount','redeem_req.status')
                     ->join('users','redeem_req.user_id','=','users.id')
                     ->where('redeem_req.is_approved',0)
-                    ->orderBy('redeem_req.id','desc')->get();
-                    
+                    ->orderBy('redeem_req.id','desc')->get();                    
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
@@ -506,6 +697,56 @@ class PanelController extends Controller
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="action-request badge bg-success" data-action="approve" data-id="'.$row->id.'" >Approve</a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" >Reject</a>';
+                    return $action;
+                })
+                ->rawColumns(['status','action'])
+                ->make(true);
+        }
+    }
+
+    public function getReedemApprovedList (Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Redemption::select('redeem_req.id','redeem_req.user_id','users.name as username','redeem_req.is_approved','redeem_req.amount','redeem_req.status')
+                    ->join('users','redeem_req.user_id','=','users.id')
+                    ->where('redeem_req.is_approved',1)
+                    ->orderBy('redeem_req.id','desc')->get();                    
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('status', function($row){
+                    $status = '<span class="badge bg-warning">Active</span>';
+                    if($row->status == 0) {
+                        $status = '<span class="badge bg-danger">Inactive</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('action', function($row){
+                    $action = '<a href="javascript:void(0)" class="badge bg-success" >Approved</a>';
+                    return $action;
+                })
+                ->rawColumns(['status','action'])
+                ->make(true);
+        }
+    }
+
+    public function getReedemRejectedList (Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Redemption::select('redeem_req.id','redeem_req.user_id','users.name as username','redeem_req.is_approved','redeem_req.amount','redeem_req.status')
+                    ->join('users','redeem_req.user_id','=','users.id')
+                    ->where('redeem_req.is_approved',2)
+                    ->orderBy('redeem_req.id','desc')->get();                    
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('status', function($row){
+                    $status = '<span class="badge bg-warning">Active</span>';
+                    if($row->status == 0) {
+                        $status = '<span class="badge bg-danger">Inactive</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('action', function($row){
+                    $action = '<a href="javascript:void(0)" class="badge bg-danger" >Rejected</a>';
                     return $action;
                 })
                 ->rawColumns(['status','action'])

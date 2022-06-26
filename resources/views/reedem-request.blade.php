@@ -26,11 +26,62 @@
                 </div>
             </div>
         </div>
-        <section class="section">
+        <section class="section row">
             <div class="col-md-6 col-12">
                 <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Request List</h4>
+                    </div>
                     <div class="card-body">
                         <table class="table table-hover table-bordered" id="reedem-req-list-tbl">
+                            <thead class="text-nowrap">
+                                <tr>
+                                    <th>#</th>
+                                    <th>User Name</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-nowrap">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Approved List</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover table-bordered" id="reedem-appr-list-tbl">
+                            <thead class="text-nowrap">
+                                <tr>
+                                    <th>#</th>
+                                    <th>User Name</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-nowrap">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Rejected List</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover table-bordered" id="reedem-rej-list-tbl">
                             <thead class="text-nowrap">
                                 <tr>
                                     <th>#</th>
@@ -57,6 +108,32 @@
                 processing: true,
                 serverSide: true,
                 ajax: baseUrl + '/reedem-request/list',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', sWidth:'5%' },
+                    { data: 'username', name: 'username', sWidth:'25%' },
+                    { data: 'amount', name: 'amount', sWidth:'10%', sClass:'text-end' },
+                    { data: 'status', name: 'status', orderable: false, searchable: false, sWidth:'15%' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false, sWidth:'20%' },
+                ]
+            });
+            
+            var table = $('#reedem-appr-list-tbl').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: baseUrl + '/reedem-approved/list',
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', sWidth:'5%' },
+                    { data: 'username', name: 'username', sWidth:'25%' },
+                    { data: 'amount', name: 'amount', sWidth:'10%', sClass:'text-end' },
+                    { data: 'status', name: 'status', orderable: false, searchable: false, sWidth:'15%' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false, sWidth:'20%' },
+                ]
+            });
+            
+            var table = $('#reedem-rej-list-tbl').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: baseUrl + '/reedem-rejected/list',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', sWidth:'5%' },
                     { data: 'username', name: 'username', sWidth:'25%' },
@@ -92,6 +169,8 @@
                                     icon: "success",
                                 });
                                 $('#reedem-req-list-tbl').DataTable().ajax.url(baseUrl+'/reedem-request/list').load();
+                                $('#reedem-appr-list-tbl').DataTable().ajax.url(baseUrl+'/reedem-approved/list').load();
+                                $('#reedem-rej-list-tbl').DataTable().ajax.url(baseUrl+'/reedem-rejected/list').load();
                             }
                             else {
                                 swal(re.message);

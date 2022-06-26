@@ -80,10 +80,12 @@
 
 @endsection
 @push('script')
-<script src="https://cdn.ckeditor.com/4.19.0/standard/ckeditor.js"></script>
 <script>
-    $('.select2').select2();
-
-    CKEDITOR.replace( 'message');
+    CKEDITOR.replace( 'message',{
+            toolbar: [
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'] },
+                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+            ]
+        });
 </script>
 @endpush

@@ -13,12 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('shop_landlines', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100)->nullable();
-            $table->string('image',255)->nullable();
-            $table->integer('status')->nullable();
+            $table->bigInteger('vendor_id')->unsigned();
+            $table->string('phone_code',45)->nullable();
+            $table->string('landline_no',100)->unique()->nullable();
+            $table->integer('status')->default(1);
             $table->timestamps();
+
+            $table->foreign('vendor_id')->references('id')->on('vendor')->onDelete('cascade');
         });
     }
 
@@ -29,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('shop_landlines');
     }
 };

@@ -37,7 +37,7 @@
                     </div>
                     <div class="card-content">
                         <div class="card-body">
-                            <form class="form form-horizontal" action="{{URL::route('category-submit')}}" method="POST">
+                            <form class="form form-horizontal" action="{{URL::route('vendor-create-submit')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-body">
                                     <div class="row">
@@ -45,7 +45,7 @@
                                         <div class="form-group row">
                                             <div class="col-md-4">
                                                 <label for="name" class="label-control">Name <span class="text-danger">*</span></label>
-                                                <input type="text" id="name" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Name" maxlength="50" autocomplete="off" oninput="this.value = this.value.replace(/[^A-Za-z.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                <input type="text" id="name" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Name" maxlength="50" autocomplete="off" value="{{old('name')}}">
                                                 @error('name')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -56,14 +56,14 @@
                                             <div class="col-md-4">
                                                 <label for="mobile_no" class="label-control">Mobile No <span class="text-danger">*</span></label>
                                                 <div class="input-group">
-                                                    <select name="mobile_no_code" id="mobile_no_code" class="select2 btn btn-light-secondary @error('mobile_no_code') is-invalid @enderror">
+                                                    <select name="mobile_no_code" id="mobile_no_code" class="select2 btn btn-light-secondary @error('mobile_no_code') is-invalid @enderror" required >
                                                         @if(count($countryCode) > 0)
                                                         @foreach($countryCode as $code)
                                                         <option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="{{old('mobile_no')}}">
                                                 </div>
                                                 @error('mobile_no')
                                                     <span class="invalid-feedback" role="alert">
@@ -74,7 +74,7 @@
                                             
                                             <div class="col-md-4">
                                                 <label for="email" class="label-control">Email <span class="text-danger">*</span></label>
-                                                <input type="text" id="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Email" maxlength="50" autocomplete="off">
+                                                <input type="text" id="email" class="form-control @error('email') is-invalid @enderror" value="{{old('email')}}" name="email" placeholder="Email" maxlength="50" autocomplete="off">
                                                 @error('email')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -86,8 +86,8 @@
                                         <div class="form-group row">
                                             <div class="col-md-4">
                                                 <label for="category_id" class="label-control">Category <span class="text-danger">*</span></label>
-                                                <select name="category_id" id="category_id" class="select2 form-control @error('category_id') is-invalid @enderror">
-                                                    <option value="" selected >Select Category</option>
+                                                <select name="category_id" id="category_id" class="select2 form-control @error('category_id') is-invalid @enderror" >
+                                                    <option value="" selected disabled >Select Category</option>
                                                     @if(count($category) > 0)
                                                     @foreach ($category as $ct)
                                                     <option value="{{$ct->id}}">{{$ct->name}}</option>
@@ -103,7 +103,7 @@
 
                                             <div class="col-md-4">
                                                 <label for="shop_name" class="label-control">Shop Name <span class="text-danger">*</span></label>
-                                                <input type="text" id="shop_name" class="form-control @error('shop_name') is-invalid @enderror" name="shop_name" placeholder="Shop Name" maxlength="70" autocomplete="off">
+                                                <input type="text" id="shop_name" value="{{old('shop_name')}}" class="form-control @error('shop_name') is-invalid @enderror" name="shop_name" placeholder="Shop Name" maxlength="70" autocomplete="off">
                                                 @error('shop_name')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -112,9 +112,9 @@
                                             </div>
                                             
                                             <div class="col-md-4">
-                                                <label for="website" class="label-control">Website <span class="text-danger">*</span></label>
-                                                <input type="url" id="website" class="form-control @error('website') is-invalid @enderror" name="website" placeholder="Website" maxlength="70" autocomplete="off">
-                                                @error('website')
+                                                <label for="shop_website" class="label-control">Website <span class="text-danger">*</span></label>
+                                                <input type="url" id="shop_website" value="{{old('shop_website')}}" class="form-control @error('shop_website') is-invalid @enderror" name="shop_website" placeholder="Website" maxlength="70" autocomplete="off">
+                                                @error('shop_website')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
                                                     </span>
@@ -128,7 +128,16 @@
                                                 <span class="fa fa-plus btn btn-primary btn-xs multiple-field-btn add-multiple-landline float-end mb-1"></span>
                                                 <span class="fa fa-minus mx-1 btn btn-danger btn-xs multiple-field-btn remove-multiple-landline float-end mb-1"></span>
 
-                                                <input type="text" id="shop_landline" class="mb-2 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="70" autocomplete="off">
+                                                <div class="input-group shop_landline_div">
+                                                    <select name="shop_landline_code[]" id="shop_landline_code" class="select2 btn btn-light-secondary @error('shop_landline_code') is-invalid @enderror" required >
+                                                        @if(count($countryCode) > 0)
+                                                        @foreach($countryCode as $code)
+                                                        <option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
+                                                        @endforeach
+                                                        @endif
+                                                    </select>
+                                                    <input type="text" id="shop_landline" class="mb-2 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="15" autocomplete="off">
+                                                </div>
                                                 @error('shop_landline')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -142,14 +151,14 @@
                                                 <span class="fa fa-minus mx-1 btn btn-danger btn-xs multiple-field-btn remove-multiple-mobile float-end mb-1"></span>
                                                 
                                                 <div class="input-group shop_mobile">
-                                                    <select name="shop_mob_code" id="shop_mob_code" class="select2 btn btn-light-secondary @error('shop_mob_code') is-invalid @enderror">
+                                                    <select name="shop_mob_code[]" id="shop_mob_code" class="select2 btn btn-light-secondary @error('shop_mob_code') is-invalid @enderror" required >
                                                         @if(count($countryCode) > 0)
                                                         @foreach($countryCode as $code)
                                                         <option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="shop_mobile" class="mb-2 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="70" autocomplete="off">
+                                                    <input type="text" id="shop_mobile" class="mb-2 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="10" autocomplete="off">
                                                 </div>
                                                 @error('shop_mobile')
                                                     <span class="invalid-feedback" role="alert">
@@ -172,10 +181,10 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="form-group row">                                        
+                                        <div class="form-group row">
                                             <div class="col-md-4">
                                                 <label for="location" class="label-control">Location <span class="text-danger">*</span></label>
-                                                <input type="text" id="location" class="form-control @error('location') is-invalid @enderror" name="location" placeholder="Location" maxlength="100" autocomplete="off">
+                                                <input type="text" id="location" value="{{old('location')}}" class="form-control @error('location') is-invalid @enderror" name="location" placeholder="Location" maxlength="100" autocomplete="off">
                                                 @error('location')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -185,7 +194,7 @@
                                         
                                             <div class="col-md-4">
                                                 <label for="latitude" class="label-control">Latitude <span class="text-danger">*</span></label>
-                                                <input type="text" id="latitude" class="form-control @error('latitude') is-invalid @enderror" name="latitude" placeholder="Latitude" maxlength="10" autocomplete="off">
+                                                <input type="text" id="latitude" value="{{old('latitude')}}" class="form-control @error('latitude') is-invalid @enderror" name="latitude" placeholder="Latitude" maxlength="10" autocomplete="off">
                                                 @error('latitude')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -195,8 +204,43 @@
                                         
                                             <div class="col-md-4">
                                                 <label for="longitude" class="label-control">Longitude <span class="text-danger">*</span></label>
-                                                <input type="text" id="longitude" class="form-control @error('longitude') is-invalid @enderror" name="longitude" placeholder="Longitude" maxlength="10" autocomplete="off">
+                                                <input type="text" id="longitude" value="{{old('longitude')}}" class="form-control @error('longitude') is-invalid @enderror" name="longitude" placeholder="Longitude" maxlength="10" autocomplete="off">
                                                 @error('longitude')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <span>{{ $message }}</span>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <label for="cover_img" class="label-control">Shop Cover Image <span class="text-danger">*</span></label>
+                                                <span class="fa fa-plus btn btn-primary btn-xs multiple-field-btn add-multiple-coverImg float-end mb-1"></span>
+                                                <span class="fa fa-minus mx-1 btn btn-danger btn-xs multiple-field-btn remove-multiple-coverImg float-end mb-1"></span>
+                                                
+                                                <input type="file" id="cover_img" class="mb-2 cover_img form-control @error('cover_img') is-invalid @enderror" name="cover_img[]" placeholder="Location" autocomplete="off">
+                                                @error('cover_img')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <span>{{ $message }}</span>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <label for="shop_logo" class="label-control">Shop Logo <span class="text-danger">*</span></label>
+                                                <input type="file" id="shop_logo" class="form-control @error('shop_logo') is-invalid @enderror" name="shop_logo" placeholder="Location" autocomplete="off">
+                                                @error('shop_logo')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <span>{{ $message }}</span>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                            
+                                            <div class="col-md-4">
+                                                <label for="description" class="label-control">Short Description <span class="text-danger">*</span></label>
+                                                <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror">{{old('name')}}"</textarea>
+                                                @error('description')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
                                                     </span>
@@ -225,6 +269,13 @@
         $('.remove-multiple-landline').css('display','none');
         $('.remove-multiple-mobile').css('display','none');
         $('.remove-multiple-email').css('display','none');
+        $('.remove-multiple-coverImg').css('display','none');
+        CKEDITOR.replace( 'description',{
+            toolbar: [
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'] },
+                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+            ]
+        });
         
         if ("geolocation" in navigator){
             //check geolocation available 
@@ -238,25 +289,35 @@
         }
     });
 
-    function getReverseGeocodingData(lat, lng) {
-        var latlng = new google.maps.LatLng(lat, lng);
-        // This is making the Geocode request
-        var geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ 'latLng': latlng },  (results, status) =>{
-            if (status !== google.maps.GeocoderStatus.OK) {
-                alert(status);
-            }
-            // This is checking to see if the Geoeode Status is OK before proceeding
-            if (status == google.maps.GeocoderStatus.OK) {
-                console.log(results);
-                var address = (results[0].formatted_address);
-            }
-        });
-    }
+    // function getReverseGeocodingData(lat, lng) {
+    //     var latlng = new google.maps.LatLng(lat, lng);
+    //     // This is making the Geocode request
+    //     var geocoder = new google.maps.Geocoder();
+    //     geocoder.geocode({ 'latLng': latlng },  (results, status) =>{
+    //         if (status !== google.maps.GeocoderStatus.OK) {
+    //             alert(status);
+    //         }
+    //         // This is checking to see if the Geoeode Status is OK before proceeding
+    //         if (status == google.maps.GeocoderStatus.OK) {
+    //             console.log(results);
+    //             var address = (results[0].formatted_address);
+    //         }
+    //     });
+    // }
 
     $('body').on('click','.add-multiple-landline', function () {
         if($('.shop_landline').length < 5) {
-            $('body').find('.shop_landline:last').after('<input type="text" id="shop_landline" class="mb-2 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="70" autocomplete="off">');
+            var landlineHtml = '<div class="input-group shop_landline_div">'+
+                '<select name="shop_landline_code[]" id="shop_landline_code" class="select2 btn btn-light-secondary @error('shop_landline_code') is-invalid @enderror" required >'+
+                    '@if(count($countryCode) > 0)'+
+                    '@foreach($countryCode as $code)'+
+                    '<option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>'+
+                    '@endforeach'+
+                    '@endif'+
+                '</select>'+
+                '<input type="text" id="shop_landline" class="mb-2 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="70" autocomplete="off">'+
+            '</div>';
+            $('body').find('.shop_landline:last').after(landlineHtml);
         }
         if($('.shop_landline').length == 1) { $('.remove-multiple-landline').css('display','none');} else {$('.remove-multiple-landline').css('display','block');}
         if($('.shop_landline').length >= 5) { $('.add-multiple-landline').css('display','none');} else {$('.add-multiple-landline').css('display','block');}
@@ -270,7 +331,7 @@
     $('body').on('click','.add-multiple-mobile', function () {
         if($('.shop_mobile').length < 5) {
             var mobileData = '<div class="input-group shop_mobile">'+
-                '<select name="shop_mob_code" id="shop_mob_code" class="select2 btn btn-light-secondary @error('shop_mob_code') is-invalid @enderror">'+
+                '<select name="shop_mob_code[]" id="shop_mob_code" class="select2 btn btn-light-secondary @error('shop_mob_code') is-invalid @enderror" required >'+
                     '@if(count($countryCode) > 0)'+
                     '@foreach($countryCode as $code)'+
                     '<option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>'+
@@ -280,7 +341,7 @@
                 '<input type="text" id="shop_mobile" class="mb-2 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="70" autocomplete="off">'+
             '</div>';
             $('body').find('.shop_mobile:last').after(mobileData);
-            $('.select2').select2();
+            $('body').find('.select2').select2();
         }
         if($('.shop_mobile').length == 1) { $('.remove-multiple-mobile').css('display','none');} else {$('.remove-multiple-mobile').css('display','block');}
         if($('.shop_mobile').length >= 5) { $('.add-multiple-mobile').css('display','none');} else {$('.add-multiple-mobile').css('display','block');}
@@ -302,6 +363,19 @@
         $('body').find('.shop_email:last').remove();
         if($('.shop_email').length == 1) { $('.remove-multiple-email').css('display','none');} else {$('.remove-multiple-email').css('display','block');}
         if($('.shop_email').length >= 5) { $('.add-multiple-email').css('display','none');} else {$('.add-multiple-email').css('display','block');}
+    });
+
+    $('body').on('click','.add-multiple-coverImg', function () {
+        if($('.cover_img').length < 5) {
+            $('body').find('.cover_img:last').after('<input type="file" id="cover_img" class="mb-2 cover_img form-control @error('cover_img') is-invalid @enderror" name="cover_img[]" autocomplete="off">');
+        }
+        if($('.cover_img').length == 1) { $('.remove-multiple-coverImg').css('display','none');} else {$('.remove-multiple-coverImg').css('display','block');}
+        if($('.cover_img').length >= 5) { $('.add-multiple-coverImg').css('display','none');} else {$('.add-multiple-coverImg').css('display','block');}
+    });    
+    $('body').on('click','.remove-multiple-coverImg', function () {
+        $('body').find('.cover_img:last').remove();
+        if($('.cover_img').length == 1) { $('.remove-multiple-coverImg').css('display','none');} else {$('.remove-multiple-coverImg').css('display','block');}
+        if($('.cover_img').length >= 5) { $('.add-multiple-coverImg').css('display','none');} else {$('.add-multiple-coverImg').css('display','block');}
     });
 </script>
 @endpush

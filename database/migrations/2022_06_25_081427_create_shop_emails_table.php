@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('shop_emails', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100)->nullable();
-            $table->string('image',255)->nullable();
-            $table->integer('status')->nullable();
+            $table->bigInteger('vendor_id')->unsigned();
+            $table->string('shop_email',100)->nullable()->unique();
+            $table->integer('status')->default(1);
             $table->timestamps();
+
+            $table->foreign('vendor_id')->references('id')->on('vendor')->onDelete('cascade');
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('shop_emails');
     }
 };

@@ -31,19 +31,17 @@
             <div class="card">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-hover table-bordered" id="user-list-tbl">
+                        <table class="table table-hover table-bordered" id="vendor-list-tbl">
                             <thead class="text-nowrap">
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>DOB</th>
+                                    <th>Shop Name</th>
+                                    <th>Website</th>
+                                    <th>Category</th>
                                     <th>Location</th>
-                                    <th>Emirates ID</th>
-                                    <th>Passport</th>
-                                    <th>Address</th>
-                                    <th>Referal Code</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -98,20 +96,18 @@
             var table = $('#vendor-list-tbl').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: baseUrl + '/users-list/all',
+                ajax: baseUrl + '/vendor-list/all',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                     { data: 'name', name: 'name' },
                     { data: 'email', name: 'email' },
-                    { data: 'mobile_no', name: 'mobile_no' },
-                    { data: 'dob', name: 'dob' },
-                    { data: 'location', name: 'location', sWidth: '20%' },
-                    { data: 'emirates_id', name: 'emirates_id' },
-                    { data: 'passport_no', name: 'passport_no' },
-                    { data: 'address', name: 'address' },
-                    { data: 'referal_code', name: 'referal_code' },
+                    { data: 'mobileNo', name: 'mobileNo' },
+                    { data: 'shop_name', name: 'shop_name' },
+                    { data: 'website', name: 'website' },
+                    { data: 'cate_name', name: 'cate_name' },
+                    { data: 'location', name: 'location' },
                     { data: 'status', name: 'status', orderable: false, searchable: false },
-                    { data: 'process', name: 'process', orderable: false, searchable: false },
+                    { data: 'action', name: 'action', orderable: false, searchable: false },
                 ]
             });
         });

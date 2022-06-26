@@ -35,8 +35,9 @@ Route::group(['Prefix' => '/'], function () {
         Route::get('/category-list/edit', [App\Http\Controllers\PanelController::class, 'editSelectedCategory'])->name('category-list-edit');
 
         Route::get('/vendor', [App\Http\Controllers\PanelController::class, 'createNewVendor'])->name('vendor');
+        Route::post('/vendor/submit', [App\Http\Controllers\PanelController::class, 'submitNewVendorDetails'])->name('vendor-create-submit');
         Route::view('/vendor-list','vendor-list')->name('vendor-list');
-        Route::get('/vendor/list/all',[App\Http\Controllers\PanelController::class, 'getAllVendorList'])->name('vendor-list-all');
+        Route::get('/vendor-list/all',[App\Http\Controllers\PanelController::class, 'getAllVendorList'])->name('vendor-list-all');
 
         Route::get('/message-to-users',[App\Http\Controllers\PanelController::class, 'messageToUsersList'])->name('message-to-users');
         Route::post('/message-to-users/submit',[App\Http\Controllers\PanelController::class, 'messageToUsersSubmit'])->name('message-to-user-submit');
@@ -53,6 +54,8 @@ Route::group(['Prefix' => '/'], function () {
 
         Route::view('/reedem-request', 'reedem-request')->name('reedem-request');
         Route::get('/reedem-request/list', [App\Http\Controllers\PanelController::class, 'getReedemRequestList'])->name('reedem-request-list');
+        Route::get('/reedem-approved/list', [App\Http\Controllers\PanelController::class, 'getReedemApprovedList'])->name('reedem-approved-list');
+        Route::get('/reedem-rejected/list', [App\Http\Controllers\PanelController::class, 'getReedemRejectedList'])->name('reedem-rejected-list');
         Route::put('/reedem-request/action', [App\Http\Controllers\PanelController::class, 'reedemRequestAction'])->name('reedem-request-action');
 
 
