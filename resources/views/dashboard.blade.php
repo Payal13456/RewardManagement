@@ -27,7 +27,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Total Users</h6>
-                                        <h6 class="font-extrabold mb-0">4</h6>
+                                        <h6 class="font-extrabold mb-0">{{$users}}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Total Vendor</h6>
-                                        <h6 class="font-extrabold mb-0">1</h6>
+                                        <h6 class="font-extrabold mb-0">{{$vendor}}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6 class="text-muted font-semibold">Total Blocked Users</h6>
-                                        <h6 class="font-extrabold mb-0">0</h6>
+                                        <h6 class="font-extrabold mb-0">{{$blockedUsers}}</h6>
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +92,7 @@
                                 <h4>Country wise Users</h4>
                             </div>
                             <div class="card-body">
-                                <div id="chart-profile-visit"></div>
+                                <div id="chart-country-wise"></div>
                             </div>
                         </div>
                     </div>
@@ -277,3 +277,34 @@
     </div>
     
 @endsection
+@push('script')
+<script>
+    var optionsCountryWise = {
+        annotations: {
+            position: 'back'
+        },
+        dataLabels: {
+            enabled:false
+        },
+        chart: {
+            type: 'bar',
+            height: 300
+        },
+        fill: {
+            opacity:1
+        },
+        plotOptions: {
+        },
+        series: [{
+            name: 'sales',
+            data: [9,20,30,20,10,20,30,20,10,20,30,20]
+        }],
+        colors: '#435ebe',
+        xaxis: {
+            categories: @json($countryArr),
+        },
+    }
+    var chartCountryWise = new ApexCharts(document.querySelector("#chart-country-wise"), optionsCountryWise);
+    chartCountryWise.render();
+</script>
+@endpush

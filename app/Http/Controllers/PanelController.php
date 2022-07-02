@@ -24,7 +24,18 @@ class PanelController extends Controller
 {
     public function getDashboard ()
     {
-        return view ('dashboard');
+        $users = User::where('role',2)->count();
+        $vendor = User::where('role',3)->count();
+        $blockedUsers = User::where('role',2)->where('is_blocked',1)->count();
+
+        $countryArr = [];
+        $country = CountryCode::select('country_name')->orderBy('country_name','ASC')->get();
+        if(count($country) > 0) {
+            foreach($country as $ctry) {
+                array_push($countryArr, $ctry->country_name);
+            }
+        }
+        return view ('dashboard', compact('users','vendor','blockedUsers','countryArr'));
     }
 
     public function getAllUsersList (Request $request)
@@ -471,6 +482,12 @@ class PanelController extends Controller
         }
     }
 
+    public function getCateForSubscriptionPlan (Request $request) 
+    {
+        $cate = Categories::where('status',1)->get();        
+        return view ('subscription-plans')->with('category',$cate);
+    }
+
     public function getAllSubscriptionPlanList (Request $request)
     {
         if ($request->ajax()) {
@@ -497,12 +514,14 @@ class PanelController extends Controller
     public function createNewSubscriptionPlanSubmit (Request $request)
     {
         $request->validate([
+            'category_id'   =>  'required',
             'plan_name'     =>  'required|string',
             'plan_validity' =>  'required',
             'plan_amount'   =>  'required',
             'plan_tax'      =>  'required',
             'plan_total'    =>  'required'
         ],[
+            'category_id.required'  =>  'Please select Category.',
             'plan_name.required'    =>  'Plan name should not be blank.',
             'plan_validity.required'    =>  'Plan validity should not be blank.',
             'plan_amount.required'  =>  'Plan amount should not be blank.',
@@ -512,6 +531,7 @@ class PanelController extends Controller
         try {
             if(empty($request->editPlansId)) {
                 $planArr = array(
+                    'category'      =>  implode(',',$request->category_id),
                     'name'          =>  ucwords($request->plan_name),
                     'validity'      =>  $request->plan_validity,
                     'amount'        =>  $request->plan_amount,
@@ -530,6 +550,7 @@ class PanelController extends Controller
             } 
             else {
                 $planArr = array(
+                    'category'      =>  implode(',',$request->category_id),
                     'name'          =>  ucwords($request->plan_name),
                     'validity'      =>  $request->plan_validity,
                     'amount'        =>  $request->plan_amount,

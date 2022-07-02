@@ -139,3 +139,6 @@
 .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 34px !important;
 }
+.pd-10 {
+    padding: 10px !important;
+}

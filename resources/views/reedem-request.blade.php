@@ -26,8 +26,8 @@
                 </div>
             </div>
         </div>
-        <section class="section row">
-            <div class="col-md-6 col-12">
+        <section class="section">
+            <div class="col-md-12 col-12">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Request List</h4>
@@ -51,7 +51,7 @@
                 </div>
             </div>
             
-            <div class="col-md-6 col-12">
+            <div class="col-md-12 col-12">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Approved List</h4>
@@ -75,7 +75,7 @@
                 </div>
             </div>
             
-            <div class="col-md-6 col-12">
+            <div class="col-md-12 col-12">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Rejected List</h4>

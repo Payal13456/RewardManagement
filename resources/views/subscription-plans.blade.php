@@ -42,8 +42,24 @@
                                     <div class="row">
                                         <input type="hidden" name="editPlansId" id="editPlansId">
                                         
-                                        <label for="plan_name" class="col-md-4 label-control">Plan Name <span class="text-danger">*</span></label>
-                                        <div class="col-md-8 form-group">
+                                        <label for="category_id" class="col-md-4 label-control mb-4">Category <span class="text-danger">*</span></label>
+                                        <div class="mb-4 col-md-8 form-group">
+                                            <select name="category_id[]" id="category_id" class="select2 form-control @error('category_id') is-invalid @enderror" multiple >
+                                                @if(count($category) > 0)
+                                                @foreach ($category as $ct)
+                                                <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            @error('category_id')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <span>{{ $message }}</span>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        
+                                        <label for="plan_name" class="col-md-4 label-control mb-4">Plan Name <span class="text-danger">*</span></label>
+                                        <div class="col-md-8 form-group mb-4">
                                             <input type="text" id="plan_name" class="form-control @error('plan_name') is-invalid @enderror" name="plan_name" placeholder="Plan Name" maxlength="50" autocomplete="off">
                                             @error('plan_name')
                                                 <span class="invalid-feedback" role="alert">
@@ -52,8 +68,8 @@
                                             @enderror
                                         </div>
                                             
-                                        <label for="plan_validity" class="col-md-4 label-control">Plan Validity <span class="text-danger">*</span> <small>(in days)</small> </label>
-                                        <div class="col-md-8 form-group">
+                                        <label for="plan_validity" class="col-md-4 label-control mb-4">Plan Validity <span class="text-danger">*</span> <small>(in days)</small> </label>
+                                        <div class="col-md-8 form-group mb-4">
                                             <input type="text" id="plan_validity" class="form-control @error('plan_validity') is-invalid @enderror" name="plan_validity" placeholder="Plan Validity (in days)" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                             @error('plan_validity')
                                                 <span class="invalid-feedback" role="alert">
@@ -62,8 +78,8 @@
                                             @enderror
                                         </div>
                                         
-                                        <label for="plan_amount" class="col-md-4 label-control">Amount <span class="text-danger">*</span></label>
-                                        <div class="col-md-8 form-group">
+                                        <label for="plan_amount" class="col-md-4 label-control mb-4">Amount <span class="text-danger">*</span></label>
+                                        <div class="col-md-8 form-group mb-4">
                                             <input type="text" id="plan_amount" class="calsTotal form-control @error('plan_amount') is-invalid @enderror" name="plan_amount" placeholder="Plan Amount" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="0">
                                             @error('plan_amount')
                                                 <span class="invalid-feedback" role="alert">
@@ -72,9 +88,9 @@
                                             @enderror
                                         </div>
                                         
-                                        <label for="plan_tax" class="col-md-4 label-control">Tax <span class="text-danger">*</span> <small>(in digits)</small> </label>
-                                        <div class="col-md-8 form-group">
-                                            <input type="text" id="plan_tax" class="calsTotal form-control @error('plan_tax') is-invalid @enderror" name="plan_tax" placeholder="Tax (in digit)" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" value="0">
+                                        <label for="plan_tax" class="col-md-4 label-control mb-4">Tax <span class="text-danger">*</span> <small>(in %)</small> </label>
+                                        <div class="col-md-8 form-group mb-4">
+                                            <input type="text" id="plan_tax" class="calsTotal form-control @error('plan_tax') is-invalid @enderror" name="plan_tax" placeholder="Tax (in digit)" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" value="0">
                                             @error('plan_tax')
                                                 <span class="invalid-feedback" role="alert">
                                                     <span>{{ $message }}</span>
@@ -82,8 +98,8 @@
                                             @enderror
                                         </div>
                                         
-                                        <label for="plan_total" class="col-md-4 label-control">Total <span class="text-danger">*</span></label>
-                                        <div class="col-md-8 form-group">
+                                        <label for="plan_total" class="col-md-4 label-control mb-4">Total <span class="text-danger">*</span></label>
+                                        <div class="col-md-8 form-group mb-4">
                                             <input type="text" id="plan_total" class="form-control @error('plan_total') is-invalid @enderror" name="plan_total" placeholder="Plan Total" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                             @error('plan_total')
                                                 <span class="invalid-feedback" role="alert">
@@ -161,7 +177,8 @@
             var planAmt = $('#plan_amount').val();
             var planTax = $('#plan_tax').val();
             if(planAmt > 0) {
-                totalAmt = (parseInt(planAmt) + parseInt(planTax));
+                totalCalc = (parseInt(planAmt * planTax) / 100);
+                totalAmt = (parseInt(planAmt) + parseInt(totalCalc));
             }
             $('#plan_total').val(totalAmt).attr('readonly','readonly');
         });
