@@ -30,76 +30,85 @@
     <!-- Basic Horizontal form layout section start -->
     <section id="basic-horizontal-layouts">
         <div class="row match-height">
-            <div class="col-md-5 col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Add Category</h4>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-body">
-                            <form class="form form-horizontal" action="{{URL::route('category-submit')}}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <div class="form-body">
-                                    <div class="row">
-                                        <input type="hidden" name="editCategoryId" id="editCategoryId">
-                                        <input type="hidden" name="editCategoryImg" id="editCategoryImg">
-                                        <label for="category_name" class="label-control col-md-4">Category Name <span class="text-danger">*</span></label>
-                                        <div class="col-md-8 form-group">
-                                            <input type="text" id="category_name" class="form-control @error('category_name') is-invalid @enderror" name="category_name" placeholder="Category Name" maxlength="50" autocomplete="off">
-                                            @error('category_name')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <span>{{ $message }}</span>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        
-                                        <label for="category_img" class="label-control col-md-4">Category Image <span class="text-danger">*</span></label>
-                                        <div class="col-md-8 form-group">
-                                            <input type="file" id="category_img" class="form-control @error('category_img') is-invalid @enderror" name="category_img" autocomplete="off">
-                                            @error('category_img')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <span>{{ $message }}</span>
-                                                </span>
-                                            @enderror
-                                        </div>
 
-                                        <div class="col-sm-12 d-flex justify-content-end">
-                                            <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item cursor-point" role="presentation">
+                                <span class="nav-link active" id="category-list-tab" data-bs-toggle="pill" data-bs-target="#category-list" role="tab" aria-controls="category-list" aria-selected="true">Category List</span>
+                            </li>
+                            <li class="nav-item cursor-point" role="presentation">
+                                <span class="nav-link" id="category-add-tab" data-bs-toggle="pill" data-bs-target="#category-add" role="tab" aria-controls="category-add" aria-selected="false">Add Category</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="category-list" role="tabpanel" aria-labelledby="category-list-tab">
+                                <table class="table table-hover table-bordered" id="category-list-tbl">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Category Name</th>
+                                            <th>Image</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+    
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="tab-pane fade" id="category-add" role="tabpanel" aria-labelledby="category-add-tab">
+                                <div class="col-md-12 col-12">
+                                    <div class="card">
+                                        <div class="card-content">
+                                            <div class="card-body">
+                                                <form class="form form-horizontal" action="{{URL::route('category-submit')}}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <div class="form-body">
+                                                        <div class="row">
+                                                            <input type="hidden" name="editCategoryId" id="editCategoryId">
+                                                            <input type="hidden" name="editCategoryImg" id="editCategoryImg">
+                                                            <label for="category_name" class="label-control col-md-4">Category Name <span class="text-danger">*</span></label>
+                                                            <div class="col-md-8 form-group">
+                                                                <input type="text" id="category_name" class="form-control @error('category_name') is-invalid @enderror" name="category_name" placeholder="Category Name" maxlength="50" autocomplete="off">
+                                                                @error('category_name')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <span>{{ $message }}</span>
+                                                                    </span>
+                                                                @enderror
+                                                            </div>
+                                                            
+                                                            <label for="category_img" class="label-control col-md-4">Category Image <span class="text-danger">*</span></label>
+                                                            <div class="col-md-8 form-group">
+                                                                <input type="file" id="category_img" class="form-control @error('category_img') is-invalid @enderror" name="category_img" autocomplete="off">
+                                                                @error('category_img')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <span>{{ $message }}</span>
+                                                                    </span>
+                                                                @enderror
+                                                            </div>
+                    
+                                                            <div class="col-sm-12 d-flex justify-content-end">
+                                                                <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-7 col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Category List</h4>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-body">
-                            <table class="table table-hover table-bordered" id="category-list-tbl">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Category Name</th>
-                                        <th>Image</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
 
         </div>
     </section>
@@ -109,6 +118,14 @@
 @push('script')
 <script>
     $(document).ready(function () {
+        @if($errors->count() > 0)
+            $('#pills-tab').find('#category-list-tab').removeClass('active');
+            $('#pills-tab').find('#category-add-tab').addClass('active');
+
+            $('#pills-tabContent').find('.tab-pane').removeClass('show active');
+            $('#pills-tabContent').find('#category-add').addClass('show active');
+        @endif
+        
         var table = $('#category-list-tbl').DataTable({
             processing: true,
             serverSide: true,
@@ -166,8 +183,13 @@
             type: 'get',
             data: {id:id},
             success:function (re) {
-                console.log(re);
                 if (re.status === true) {
+                    $('#pills-tab').find('#category-list-tab').removeClass('active');
+                    $('#pills-tab').find('#category-add-tab').addClass('active');
+
+                    $('#pills-tabContent').find('.tab-pane').removeClass('show active');
+                    $('#pills-tabContent').find('#category-add').addClass('show active');
+
                     $('#editCategoryId').val(re.data.id);
                     $('#editCategoryImg').val(re.data.image);
                     $('#category_name').val(re.data.name);

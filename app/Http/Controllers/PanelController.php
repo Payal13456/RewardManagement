@@ -17,6 +17,7 @@ use App\Models\ShopEmail;
 use App\Models\ShopLandline;
 use App\Models\ShopMobileNo;
 use App\Models\shopCoverImage;
+use App\Models\PlanCategory;
 use DataTables;
 use Illuminate\Validation\Validator;
 
@@ -57,24 +58,28 @@ class PanelController extends Controller
                     return $dob;
                 })
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success">Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger">Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
                 })
                 ->addColumn('process', function($row){
                     $action = '<span class="badge bg-danger blockUnblockUser cursor-point" data-action="block" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Block User">
+                        <i class="fa fa-ban">&nbsp;&nbsp;</i>
                         Block
                     </span> &nbsp;&nbsp; 
                     <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
+                    <i class="fa fa-street-view">&nbsp;&nbsp;</i>
                         View
                     </span>';
                     if($row->status == 0) {
                         $action = '<span class="badge bg-success blockUnblockUser cursor-point" data-action="unblock" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock User">
+                        <i class="fa fa-check-circle">&nbsp;&nbsp;</i>
                             Unblock
                         </span> &nbsp;&nbsp;
                         <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
+                        <i class="fa fa-street-view">&nbsp;&nbsp;</i>
                             View
                         </span>';
                     }
@@ -103,7 +108,7 @@ class PanelController extends Controller
     public function createNewCategory (Request $request)
     {
         $request->validate([
-            'category_name' =>  'required|string|unique:categories,name',
+            'category_name' =>  'required|string',
             'category_img' =>  'required|mimes:png,jpg,jpeg,svg'
         ],[
             'category_name.required'    =>  'Category name should not be blank.',
@@ -113,22 +118,28 @@ class PanelController extends Controller
         ]);
         try {
             if($request->editCategoryId <= 0) {
-                $cateImg = null;
-                if($request->hasFile('category_img')) {
-                    $cateImg = \Str::random().'.'.time().'.'.$request->category_img->getClientOriginalExtension();
-                    $request->category_img->move(public_path('/uploads/category/'),$cateImg);
-                }
-                if(Categories::insert([
-                    'name' => ucwords($request->category_name),
-                    'image' =>  $cateImg,
-                    'status'=>  1,
-                    'created_at'    =>  date('Y-m-d H:i:s'),
-                    'updated_at'    =>  date('Y-m-d H:i:s'),
-                ])) 
-                    return back()->with('success',"Category added successfully.");
+                $getCate = Categories::where('name',$request->category_name)->count();
+                if($getCate <= 0) {
+                    $cateImg = null;
+                    if($request->hasFile('category_img')) {
+                        $cateImg = \Str::random().'.'.time().'.'.$request->category_img->getClientOriginalExtension();
+                        $request->category_img->move(public_path('/uploads/category/'),$cateImg);
+                    }
+                    if(Categories::insert([
+                        'name' => ucwords($request->category_name),
+                        'image' =>  $cateImg,
+                        'status'=>  1,
+                        'created_at'    =>  date('Y-m-d H:i:s'),
+                        'updated_at'    =>  date('Y-m-d H:i:s'),
+                    ])) 
+                        return back()->with('success',"Category added successfully.");
 
-                else 
-                    return back()->with('error',"Failed to add category, Try again.");
+                    else 
+                        return back()->with('error',"Failed to add category, Try again.");
+                }
+                else {
+                    return back()->with('error',"Category name is alredy exist, Try another..");
+                }
             }
             else if($request->editCategoryId > 0) {
                 $cateImg = $request->editCategoryimg;
@@ -158,9 +169,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success">Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger">Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
                 })
@@ -172,8 +183,8 @@ class PanelController extends Controller
                     return $image;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="remove-category" data-id="'.$row->id.'" ><i class="bi bi-trash text-danger"></i></a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="edit-category" data-id="'.$row->id.'" ><i class="bi bi-pencil-square text-primary"></i></a>';
+                    $action = '<a href="javascript:void(0)" class="remove-category badge bg-danger" data-id="'.$row->id.'" ><i class="bi bi-trash">&nbsp;&nbsp;</i>Delete</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="edit-category badge bg-success" data-id="'.$row->id.'" ><i class="bi bi-pencil-square">&nbsp;&nbsp;</i>Edit</a>';
                     return $action;
                 })
                 ->rawColumns(['status','action','image'])
@@ -368,9 +379,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-warning">Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger">Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
                 })
@@ -392,13 +403,22 @@ class PanelController extends Controller
                     return $location;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="action-request badge bg-success" data-action="approve" data-id="'.$row->id.'" >Approve</a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" >Reject</a>';
+                    $action = '<a href="javascript:void(0)" class="action-request badge bg-warning" data-action="approve" data-id="'.$row->id.'" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approve</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Reject</a>
+                    <a href="javascript:void(0)" class="action-request badge bg-primary" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i>Edit</a>';
                     return $action;
                 })
                 ->rawColumns(['website','location','status','mobileNo','action'])
                 ->make(true);
         }
+    }
+
+    public function editSelectedVendorDetails (Request $request, $id)
+    {
+        $cate = Categories::where('status',1)->get();
+        $countryCode = CountryCode::select('phone_code')->groupBy('phone_code')->orderBy('phone_code','ASC')->get();
+        
+        return view ('vendor-create')->with('category',$cate)->with('countryCode',$countryCode);
     }
 
     public function getUsersAllDetails(Request $request)
@@ -495,15 +515,15 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success">Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger">Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="remove-plans" data-id="'.$row->id.'" ><i class="bi bi-trash text-danger"></i></a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="edit-plans" data-id="'.$row->id.'" ><i class="bi bi-pencil-square text-primary"></i></a>';
+                    $action = '<a href="javascript:void(0)" class="remove-plans badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="edit-plans badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
                     return $action;
                 })
                 ->rawColumns(['status','action'])
@@ -531,7 +551,6 @@ class PanelController extends Controller
         try {
             if(empty($request->editPlansId)) {
                 $planArr = array(
-                    'category'      =>  implode(',',$request->category_id),
                     'name'          =>  ucwords($request->plan_name),
                     'validity'      =>  $request->plan_validity,
                     'amount'        =>  $request->plan_amount,
@@ -541,7 +560,18 @@ class PanelController extends Controller
                     'created_at'    =>  date('Y-m-d H:i:s'),
                     'updated_at'    =>  date('Y-m-d H:i:s')
                 );
-                if(Plans::insert($planArr)) {
+                $planId = Plans::insertGetId($planArr);
+                if($planId) {
+                    if(count($request->category_id) > 0) {
+                        for($x = 0; $x < count($request->category_id); $x++) {
+                            PlanCategory::insert([
+                                'plan_id'   =>  $planId,
+                                'category_id'   =>  $request->category_id[$x],
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s')
+                            ]);
+                        }
+                    }
                     return back()->with('success','Plan added successfully.');
                 }
                 else {
@@ -549,8 +579,11 @@ class PanelController extends Controller
                 }
             } 
             else {
+                $getSelectedCate = PlanCategory::where('plan_id',$request->editPlansId)->count();
+                if($getSelectedCate > 0) {
+                    PlanCategory::where('plan_id',$request->editPlansId)->delete();
+                }
                 $planArr = array(
-                    'category'      =>  implode(',',$request->category_id),
                     'name'          =>  ucwords($request->plan_name),
                     'validity'      =>  $request->plan_validity,
                     'amount'        =>  $request->plan_amount,
@@ -559,6 +592,16 @@ class PanelController extends Controller
                     'updated_at'    =>  date('Y-m-d H:i:s')
                 );
                 if(Plans::where('id',$request->editPlansId)->update($planArr)) {
+                    if(count($request->category_id) > 0) {
+                        for($x = 0; $x < count($request->category_id); $x++) {
+                            PlanCategory::insert([
+                                'plan_id'   =>  $request->editPlansId,
+                                'category_id'   =>  $request->category_id[$x],
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s')
+                            ]);
+                        }
+                    }
                     return back()->with('success','Plan updated successfully.');
                 }
                 else {
@@ -675,9 +718,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success">Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger">Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
                 })
@@ -690,8 +733,8 @@ class PanelController extends Controller
                     return $endDate;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="remove-plans" data-id="'.$row->id.'" ><i class="bi bi-trash text-danger"></i></a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="edit-plans" data-id="'.$row->id.'" ><i class="bi bi-pencil-square text-primary"></i></a>';
+                    $action = '<a href="javascript:void(0)" class="remove-plans badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="edit-plans badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
                     return $action;
                 })
                 ->rawColumns(['status','start_date','end_date','action'])
@@ -709,15 +752,15 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-warning">Active</span>';
+                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger">Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="action-request badge bg-success" data-action="approve" data-id="'.$row->id.'" >Approve</a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" >Reject</a>';
+                    $action = '<a href="javascript:void(0)" class="action-request badge bg-success" data-action="approve" data-id="'.$row->id.'" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approve</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Reject</a>';
                     return $action;
                 })
                 ->rawColumns(['status','action'])
@@ -735,14 +778,14 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-warning">Active</span>';
+                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger">Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="badge bg-success" >Approved</a>';
+                    $action = '<a href="javascript:void(0)" class="badge bg-success" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approved</a>';
                     return $action;
                 })
                 ->rawColumns(['status','action'])
@@ -760,14 +803,14 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-warning">Active</span>';
+                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger">Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="badge bg-danger" >Rejected</a>';
+                    $action = '<a href="javascript:void(0)" class="badge bg-danger" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Rejected</a>';
                     return $action;
                 })
                 ->rawColumns(['status','action'])

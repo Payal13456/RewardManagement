@@ -27,77 +27,78 @@
             </div>
         </div>
         <section class="section">
-            <div class="col-md-12 col-12">
+            <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Request List</h4>
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item cursor-point" role="presentation">
+                                <span class="nav-link active" id="request-list-tab" data-bs-toggle="pill" data-bs-target="#request-list" role="tab" aria-controls="request-list" aria-selected="true">Request List</span>
+                            </li>
+                            <li class="nav-item cursor-point" role="presentation">
+                                <span class="nav-link" id="approved-list-tab" data-bs-toggle="pill" data-bs-target="#approved-list" role="tab" aria-controls="approved-list" aria-selected="false">Approved List</span>
+                            </li>
+                            <li class="nav-item cursor-point" role="presentation">
+                                <span class="nav-link" id="rejected-list-tab" data-bs-toggle="pill" data-bs-target="#rejected-list" role="tab" aria-controls="rejected-list" aria-selected="false">Rejected List</span>
+                            </li>
+                        </ul>
                     </div>
                     <div class="card-body">
-                        <table class="table table-hover table-bordered" id="reedem-req-list-tbl">
-                            <thead class="text-nowrap">
-                                <tr>
-                                    <th>#</th>
-                                    <th>User Name</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-nowrap">
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="request-list" role="tabpanel" aria-labelledby="request-list-tab">
+                                <table class="table table-hover table-bordered" id="reedem-req-list-tbl">
+                                    <thead class="text-nowrap">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>User Name</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-nowrap">
+        
+                                    </tbody>
+                                </table>
+                            </div>
 
-                            </tbody>
-                        </table>
+                            <div class="tab-pane fade show" id="approved-list" role="tabpanel" aria-labelledby="approved-list-tab">
+                                <table class="table table-hover table-bordered" id="reedem-appr-list-tbl">
+                                    <thead class="text-nowrap">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>User Name</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-nowrap">
+        
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="tab-pane fade show" id="rejected-list" role="tabpanel" aria-labelledby="rejected-list-tab">
+                                <table class="table table-hover table-bordered" id="reedem-rej-list-tbl">
+                                    <thead class="text-nowrap">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>User Name</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-nowrap">
+        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="col-md-12 col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Approved List</h4>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-hover table-bordered" id="reedem-appr-list-tbl">
-                            <thead class="text-nowrap">
-                                <tr>
-                                    <th>#</th>
-                                    <th>User Name</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-nowrap">
 
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-12 col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Rejected List</h4>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-hover table-bordered" id="reedem-rej-list-tbl">
-                            <thead class="text-nowrap">
-                                <tr>
-                                    <th>#</th>
-                                    <th>User Name</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-nowrap">
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </section>
     </div>
 @endsection

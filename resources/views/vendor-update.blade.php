@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title') Create Vendor | {{ config('app.name') }} @endsection
+@section('title') Edit Vendor | {{ config('app.name') }} @endsection
 
 @section('content')
 
@@ -20,7 +20,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{URL::route('/')}}">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Vendor</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Create</li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit</li>
                     </ol>
                 </nav>
             </div>
@@ -30,10 +30,10 @@
     <!-- Basic Horizontal form layout section start -->
     <section id="basic-horizontal-layouts">
         <div class="row match-height">
-            <div class="offset-md-1 col-md-10 col-12">
+            <div class="offset-md-1 col-md-10 col-12"`>
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Add Vendor</h4>
+                        <h4 class="card-title">Edit Vendor</h4>
                     </div>
                     <div class="card-content">
                         <div class="card-body">
