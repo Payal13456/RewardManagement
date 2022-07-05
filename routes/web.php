@@ -38,6 +38,9 @@ Route::group(['Prefix' => '/'], function () {
         Route::post('/vendor/submit', [App\Http\Controllers\PanelController::class, 'submitNewVendorDetails'])->name('vendor-create-submit');
         Route::view('/vendor-list','vendor-list')->name('vendor-list');
         Route::get('/vendor-list/all',[App\Http\Controllers\PanelController::class, 'getAllVendorList'])->name('vendor-list-all');
+        Route::get('/vendor/update/{id}', [App\Http\Controllers\PanelController::class, 'editSelectedVendorDetails'])->name('vendor-create-update');
+        Route::delete('/vendor/cover-img/delete/', [App\Http\Controllers\PanelController::class, 'removeVendorCoverImage'])->name('vendor-cover-delete');
+        Route::post('/vendor/update', [App\Http\Controllers\PanelController::class, 'updateSelectedVendorDetails'])->name('vendor-edit-update');
 
         Route::get('/message-to-users',[App\Http\Controllers\PanelController::class, 'messageToUsersList'])->name('message-to-users');
         Route::post('/message-to-users/submit',[App\Http\Controllers\PanelController::class, 'messageToUsersSubmit'])->name('message-to-user-submit');
@@ -51,6 +54,9 @@ Route::group(['Prefix' => '/'], function () {
         Route::get('/offers', [App\Http\Controllers\PanelController::class, 'createNewOffers'])->name('offers');
         Route::get('/offers/list', [App\Http\Controllers\PanelController::class, 'getAllOffersList'])->name('offers-list');
         Route::post('/offers/submit', [App\Http\Controllers\PanelController::class, 'newOffersDetailSubmit'])->name('offers-submit');
+        Route::delete('/offers/delete', [App\Http\Controllers\PanelController::class, 'deleteSelectedOffers'])->name('offers-delete');
+        Route::get('/offers/edit', [App\Http\Controllers\PanelController::class, 'editSelectedOffers'])->name('offers-edit');
+        Route::post('/offers/update', [App\Http\Controllers\PanelController::class, 'selectedOffersDetailUpdate'])->name('offers-update');
 
         Route::view('/reedem-request', 'reedem-request')->name('reedem-request');
         Route::get('/reedem-request/list', [App\Http\Controllers\PanelController::class, 'getReedemRequestList'])->name('reedem-request-list');
@@ -58,6 +64,7 @@ Route::group(['Prefix' => '/'], function () {
         Route::get('/reedem-rejected/list', [App\Http\Controllers\PanelController::class, 'getReedemRejectedList'])->name('reedem-rejected-list');
         Route::put('/reedem-request/action', [App\Http\Controllers\PanelController::class, 'reedemRequestAction'])->name('reedem-request-action');
 
-
+        Route::view('/push-notification','push-notification')->name('push-notification');
+        Route::get('/push-notification/list',[App\Http\Controllers\PanelController::class, 'getPushNotificationList'])->name('push-notification-list');
     });
 });

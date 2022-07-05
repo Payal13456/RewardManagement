@@ -108,7 +108,7 @@
                                                             
                                                             <div class="mb-4 col-md-6 form-group">
                                                                 <label for="category_id" class="label-control">Category <span class="text-danger">*</span></label>
-                                                                <select name="category_id[]" id="category_id" class="select2 form-control @error('category_id') is-invalid @enderror" multiple >
+                                                                <select name="category_id[]" id="category_id" class="select2-full select2 form-control @error('category_id') is-invalid @enderror" multiple >
                                                                     @if(count($category) > 0)
                                                                     @foreach ($category as $ct)
                                                                     <option value="{{$ct->id}}">{{$ct->name}}</option>

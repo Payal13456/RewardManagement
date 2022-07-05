@@ -41,7 +41,6 @@
                                 @csrf
                                 <div class="form-body">
                                     <div class="row">
-                                        <input type="hidden" name="editCategoryId" id="editCategoryId">
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="name" class="label-control">Name <span class="text-danger">*</span></label>
@@ -63,7 +62,7 @@
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');" value="{{old('mobile_no')}}">
+                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror ml-1" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');" value="{{old('mobile_no')}}">
                                                 </div>
                                                 @error('mobile_no')
                                                     <span class="invalid-feedback" role="alert">
@@ -137,7 +136,7 @@
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="shop_landline" class="mb-2 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input type="text" id="shop_landline" class="mb-2 ml-1 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');">
                                                 </div>
                                                 @error('shop_landline')
                                                     <span class="invalid-feedback" role="alert">
@@ -158,7 +157,7 @@
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="shop_mobile" class="mb-2 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input type="text" id="shop_mobile" class="mb-2 ml-1 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');">
                                                 </div>
                                                 @error('shop_mobile')
                                                     <span class="invalid-feedback" role="alert">
@@ -245,7 +244,7 @@
                                         <div class="form-group row">
                                             <div class="col-md-12">
                                                 <label for="description" class="label-control">Short Description <span class="text-danger">*</span></label>
-                                                <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror">{{old('name')}}</textarea>
+                                                <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror">{{old('description')}}</textarea>
                                                 @error('description')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>

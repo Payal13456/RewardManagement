@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title') Edit Vendor | {{ config('app.name') }} @endsection
+@section('title') Update Vendor | {{ config('app.name') }} @endsection
 
 @section('content')
 
@@ -20,7 +20,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{URL::route('/')}}">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Vendor</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+                        <li class="breadcrumb-item active" aria-current="page">Update</li>
                     </ol>
                 </nav>
             </div>
@@ -30,22 +30,22 @@
     <!-- Basic Horizontal form layout section start -->
     <section id="basic-horizontal-layouts">
         <div class="row match-height">
-            <div class="offset-md-1 col-md-10 col-12"`>
+            <div class="offset-md-1 col-md-10 col-12">
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Edit Vendor</h4>
                     </div>
                     <div class="card-content">
                         <div class="card-body">
-                            <form class="form form-horizontal" action="{{URL::route('vendor-create-submit')}}" method="POST" enctype="multipart/form-data">
+                            <form class="form form-horizontal" action="{{URL::route('vendor-edit-update')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                <input type="hidden" name="editVendorId" value="{{$vendor->id}}">
                                 <div class="form-body">
                                     <div class="row">
-                                        <input type="hidden" name="editCategoryId" id="editCategoryId">
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="name" class="label-control">Name <span class="text-danger">*</span></label>
-                                                <input type="text" id="name" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Name" maxlength="50" autocomplete="off" value="{{old('name')}}">
+                                                <input type="text" id="name" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Name" maxlength="50" autocomplete="off" value="{{$vendor->name}}">
                                                 @error('name')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -59,11 +59,11 @@
                                                     <select name="mobile_no_code" id="mobile_no_code" class="select2 btn btn-light-secondary @error('mobile_no_code') is-invalid @enderror" required >
                                                         @if(count($countryCode) > 0)
                                                         @foreach($countryCode as $code)
-                                                        <option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
+                                                        <option @if($code->phone_code == $vendor->phone_code) selected @endif value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');" value="{{old('mobile_no')}}">
+                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror ml-1" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');" value="{{$vendor->mobile_no}}">
                                                 </div>
                                                 @error('mobile_no')
                                                     <span class="invalid-feedback" role="alert">
@@ -76,7 +76,7 @@
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="email" class="label-control">Email <span class="text-danger">*</span></label>
-                                                <input type="text" id="email" class="form-control @error('email') is-invalid @enderror" value="{{old('email')}}" name="email" placeholder="Email" maxlength="50" autocomplete="off">
+                                                <input type="text" id="email" class="form-control @error('email') is-invalid @enderror" value="{{$vendor->email}}" name="email" placeholder="Email" maxlength="50" autocomplete="off">
                                                 @error('email')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -88,9 +88,9 @@
                                                 <label for="category_id" class="label-control">Category <span class="text-danger">*</span></label>
                                                 <select name="category_id" id="category_id" class="select2 form-control @error('category_id') is-invalid @enderror" >
                                                     <option value="" selected disabled >Select Category</option>
-                                                    @if(count($category) > 0)
-                                                    @foreach ($category as $ct)
-                                                    <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                                    @if(count($cate) > 0)
+                                                    @foreach ($cate as $ct)
+                                                    <option @if($ct->id == $vendor->category_id) selected @endif value="{{$ct->id}}">{{$ct->name}}</option>
                                                     @endforeach
                                                     @endif
                                                 </select>
@@ -105,7 +105,7 @@
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="shop_name" class="label-control">Shop Name <span class="text-danger">*</span></label>
-                                                <input type="text" id="shop_name" value="{{old('shop_name')}}" class="form-control @error('shop_name') is-invalid @enderror" name="shop_name" placeholder="Shop Name" maxlength="70" autocomplete="off">
+                                                <input type="text" id="shop_name" value="{{$vendor->shop_name}}" class="form-control @error('shop_name') is-invalid @enderror" name="shop_name" placeholder="Shop Name" maxlength="70" autocomplete="off">
                                                 @error('shop_name')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -115,7 +115,7 @@
                                             
                                             <div class="col-md-6">
                                                 <label for="shop_website" class="label-control">Website <span class="text-danger">*</span></label>
-                                                <input type="url" id="shop_website" value="{{old('shop_website')}}" class="form-control @error('shop_website') is-invalid @enderror" name="shop_website" placeholder="Website" maxlength="70" autocomplete="off">
+                                                <input type="url" id="shop_website" value="{{$vendor->website}}" class="form-control @error('shop_website') is-invalid @enderror" name="shop_website" placeholder="Website" maxlength="70" autocomplete="off">
                                                 @error('shop_website')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -129,16 +129,25 @@
                                                 <label for="shop_landline" class="label-control">Shop Landline <span class="text-danger">*</span></label>
                                                 <span class="fa fa-plus btn btn-primary btn-xs multiple-field-btn add-multiple-landline float-end mb-1"></span>
 
+                                                @if(count($landLine) > 0)
+                                                @foreach($landLine as $key => $line)
                                                 <div class="input-group shop_landline_div">
                                                     <select name="shop_landline_code[]" id="shop_landline_code" class="select2 btn btn-light-secondary @error('shop_landline_code') is-invalid @enderror" required >
                                                         @if(count($countryCode) > 0)
                                                         @foreach($countryCode as $code)
-                                                        <option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
+                                                        <option @if($code->phone_code == $line->phone_code) selected @endif value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="shop_landline" class="mb-2 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input type="text" id="shop_landline" class="mb-2 ml-1 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');" value="{{$line->landline_no}}">
+
+                                                    @if($key > 0) 
+                                                    <span class="btn btn-danger fa fa-minus float-end mb-1 mx-1  multiple-field-btn remove-multiple-landline pd-10"></span>
+                                                    @endif
                                                 </div>
+                                                @endforeach
+                                                @endif
+
                                                 @error('shop_landline')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -150,16 +159,25 @@
                                                 <label for="shop_mobile" class="label-control">Shop Mobile <span class="text-danger">*</span></label>
                                                 <span class="fa fa-plus btn btn-primary btn-xs multiple-field-btn add-multiple-mobile float-end mb-1"></span>
                                                 
+                                                @if(count($mobileNo) > 0)
+                                                @foreach($mobileNo as $key => $mob)
                                                 <div class="input-group shop_mobile_div">
                                                     <select name="shop_mob_code[]" id="shop_mob_code" class="select2 btn btn-light-secondary @error('shop_mob_code') is-invalid @enderror" required >
                                                         @if(count($countryCode) > 0)
                                                         @foreach($countryCode as $code)
-                                                        <option value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
+                                                        <option @if($code->phone_code == $mob->phone_code) selected @endif value="{{$code->phone_code}}">{{'+'.$code->phone_code}}</option>
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="shop_mobile" class="mb-2 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input type="text" id="shop_mobile" class="mb-2 ml-1 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');" value="{{$mob->mobile_no}}">
+
+                                                    @if($key > 0) 
+                                                    <span class="btn btn-danger fa fa-minus float-end mb-1 mx-1  multiple-field-btn remove-multiple-mobile pd-10"></span>
+                                                    @endif
                                                 </div>
+                                                @endforeach
+                                                @endif
+
                                                 @error('shop_mobile')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -173,9 +191,16 @@
                                                 <label for="shop_email" class="label-control">Shop Email <span class="text-danger">*</span></label>
                                                 <span class="fa fa-plus btn btn-primary btn-xs multiple-field-btn add-multiple-email float-end mb-1"></span>
 
+                                                @if(count($emails) > 0)
+                                                @foreach($emails as $key => $email)
                                                 <div class="input-group shop_email_div">
-                                                    <input type="text" id="shop_email" class="mb-2 shop_email form-control @error('shop_email') is-invalid @enderror" name="shop_email[]" placeholder="Shop Email Address" maxlength="70" autocomplete="off">
+                                                    <input type="text" id="shop_email" class="mb-2 shop_email form-control @error('shop_email') is-invalid @enderror" name="shop_email[]" placeholder="Shop Email Address" maxlength="70" autocomplete="off" value="{{$email->shop_email}}">
+                                                    @if($key > 0) 
+                                                    <span class="btn btn-danger fa fa-minus float-end mb-1 mx-1  multiple-field-btn remove-multiple-email pd-10"></span>
+                                                    @endif
                                                 </div>
+                                                @endforeach
+                                                @endif
                                                 @error('shop_email')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -184,12 +209,25 @@
                                             </div>
 
                                             <div class="col-md-6">
-                                                <label for="cover_img" class="label-control">Cover Image <span class="text-danger">*</span></label>
+                                                <label for="cover_img" class="label-control mb-3">Cover Image <span class="text-danger">*</span></label>
                                                 <span class="fa fa-plus btn btn-primary btn-xs multiple-field-btn add-multiple-coverImg float-end mb-1"></span>
                                                 
-                                                <div class="input-group shop_cover_img_div">
-                                                    <input type="file" id="cover_img" class="mb-2 cover_img form-control @error('cover_img') is-invalid @enderror" name="cover_img[]" placeholder="Location" autocomplete="off">
+                                                @if(count($coverImg) > 0)
+                                                @foreach($coverImg as $key => $img)
+                                                <div class="input-group shop_cover_img_div image-area" id="coverImgDiv_{{$img->id}}">
+                                                    <span class="remove-image remove-server-coverImg" data-vendor="{{$img->vendor_id}}" data-id="{{$img->id}}">
+                                                        <i class="fa fa-times"></i>
+                                                    </span>
+                                                    <img src="{{App\Models\ShopCoverImage::getShopCoverImgPath($img->cover_image)}}" alt="{{$img->cover_image}}">
                                                 </div>
+                                                @endforeach
+                                                @endif
+                                                @if(count($coverImg) < 5)
+                                                <div class="input-group shop_cover_img_div mt-2">
+                                                    <input type="file" id="cover_img" class="cover_img form-control @error('cover_img') is-invalid @enderror" name="cover_img[]" placeholder="Location" autocomplete="off">
+                                                </div>
+                                                @endif
+                                                
                                                 @error('cover_img')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -202,6 +240,9 @@
                                             <div class="col-md-6">
                                                 <label for="shop_logo" class="label-control">Shop Logo <span class="text-danger">*</span></label>
                                                 <input type="file" id="shop_logo" class="form-control @error('shop_logo') is-invalid @enderror" name="shop_logo" placeholder="Location" autocomplete="off">
+                                                <a class="text-success" href="{{App\Models\Vendors::getShopImagePath($vendor->shop_logo)}}" target="_blank"><u>{{$vendor->shop_logo}}</u></a>
+
+                                                <input type="hidden" name="editShopLogo" value="{{$vendor->shop_logo}}">
                                                 @error('shop_logo')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -211,7 +252,7 @@
 
                                             <div class="col-md-6">
                                                 <label for="location" class="label-control">Location <span class="text-danger">*</span></label>
-                                                <input type="text" id="location" value="{{old('location')}}" class="form-control @error('location') is-invalid @enderror" name="location" placeholder="Location" maxlength="100" autocomplete="off">
+                                                <input type="text" id="location" value="{{$vendor->location}}" class="form-control @error('location') is-invalid @enderror" name="location" placeholder="Location" maxlength="100" autocomplete="off">
                                                 @error('location')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -223,7 +264,7 @@
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="latitude" class="label-control">Latitude <span class="text-danger">*</span></label>
-                                                <input type="text" id="latitude" value="{{old('latitude')}}" class="form-control @error('latitude') is-invalid @enderror" name="latitude" placeholder="Latitude" maxlength="10" autocomplete="off">
+                                                <input type="text" id="latitude" value="{{$vendor->lat}}" class="form-control @error('latitude') is-invalid @enderror" name="latitude" placeholder="Latitude" maxlength="10" autocomplete="off">
                                                 @error('latitude')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -233,7 +274,7 @@
                                         
                                             <div class="col-md-6">
                                                 <label for="longitude" class="label-control">Longitude <span class="text-danger">*</span></label>
-                                                <input type="text" id="longitude" value="{{old('longitude')}}" class="form-control @error('longitude') is-invalid @enderror" name="longitude" placeholder="Longitude" maxlength="10" autocomplete="off">
+                                                <input type="text" id="longitude" value="{{$vendor->long}}" class="form-control @error('longitude') is-invalid @enderror" name="longitude" placeholder="Longitude" maxlength="10" autocomplete="off">
                                                 @error('longitude')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -245,7 +286,7 @@
                                         <div class="form-group row">
                                             <div class="col-md-12">
                                                 <label for="description" class="label-control">Short Description <span class="text-danger">*</span></label>
-                                                <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror">{{old('name')}}</textarea>
+                                                <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror">{{$vendor->description}}</textarea>
                                                 @error('description')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -255,7 +296,7 @@
                                         </div>
 
                                         <div class="col-sm-12 d-flex justify-content-end">
-                                            <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                                            <button type="submit" class="btn btn-primary me-1 mb-1">{{ __('Update')}}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -272,10 +313,11 @@
 @push('script')
 <script>
     $(document).ready(function () {
-        $('.remove-multiple-landline').css('display','none');
-        $('.remove-multiple-mobile').css('display','none');
-        $('.remove-multiple-email').css('display','none');
-        $('.remove-multiple-coverImg').css('display','none');
+        if($('.shop_landline_div').length >= 5) { $('.add-multiple-landline').css('display','none');} else {$('.add-multiple-landline').css('display','block');}
+        if($('.shop_mobile_div').length >= 5) { $('.add-multiple-mobile').css('display','none');} else {$('.add-multiple-mobile').css('display','block');}
+        if($('.shop_email_div').length >= 5) { $('.add-multiple-email').css('display','none');} else {$('.add-multiple-email').css('display','block');}
+        if($('.shop_cover_img_div').length >= 5) { $('.add-multiple-coverImg').css('display','none');} else {$('.add-multiple-coverImg').css('display','block');}
+
         CKEDITOR.replace( 'description',{
             toolbar: [
                 { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'] },
@@ -374,7 +416,7 @@
 
     $('body').on('click','.add-multiple-coverImg', function () {
         if($('.shop_cover_img_div').length < 5) {
-            $('body').find('.shop_cover_img_div:last').after('<div class="input-group shop_cover_img_div"><input type="file" id="cover_img" class="mb-2 cover_img form-control @error('cover_img') is-invalid @enderror" name="cover_img[]" autocomplete="off">'+
+            $('body').find('.shop_cover_img_div:last').after('<div class="input-group shop_cover_img_div mt-2"><input type="file" id="cover_img" class="cover_img form-control @error('cover_img') is-invalid @enderror" name="cover_img[]" autocomplete="off">'+
             '<span class="btn btn-danger fa fa-minus float-end mb-1 mx-1 multiple-field-btn remove-multiple-coverImg pd-10"></span></div>');
         }
         if($('.shop_cover_img_div').length >= 5) { $('.add-multiple-coverImg').css('display','none');} else {$('.add-multiple-coverImg').css('display','block');}
@@ -383,6 +425,42 @@
         $(this).parents('.shop_cover_img_div').remove();
 
         if($('.shop_cover_img_div').length >= 5) { $('.add-multiple-coverImg').css('display','none');} else {$('.add-multiple-coverImg').css('display','block');}
+    });
+
+    $('body').on('click','.remove-server-coverImg', function () {
+        var vendorId = $(this).attr('data-vendor');
+        var imgId = $(this).attr('data-id');
+        swal({
+            title: "Are you sure, You want to delete this Cover Image ?",
+            text: "It cannot be re-store after delete.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url : baseUrl+'/vendor/cover-img/delete/',
+                    type: 'delete',
+                    data: {vendorId:vendorId, imgId:imgId},
+                    success:function (re) {
+                        if (re.status === true) {
+                            swal({
+                                title: re.message,
+                                icon: "success",
+                            });
+                            $('#coverImgDiv_'+imgId+'').remove();
+                        }
+                        else {
+                            swal(re.message);
+                        }
+                    }
+                });
+            }
+        })
     });
 </script>
 @endpush

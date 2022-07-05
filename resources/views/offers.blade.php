@@ -30,85 +30,21 @@
     <!-- Basic Horizontal form layout section start -->
     <section id="basic-horizontal-layouts">
         <div class="row match-height">
-            <div class="col-md-5 col-12">
+            <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Add Offers</h4>
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item cursor-point" role="presentation">
+                                <span class="nav-link active" id="offers-list-tab" data-bs-toggle="pill" data-bs-target="#offers-list" role="tab" aria-controls="offers-list" aria-selected="true">Offers List</span>
+                            </li>
+                            <li class="nav-item cursor-point" role="presentation">
+                                <span class="nav-link" id="offers-add-tab" data-bs-toggle="pill" data-bs-target="#offers-add" role="tab" aria-controls="offers-add" aria-selected="false">Add Offers</span>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="card-content">
-                        <div class="card-body">
-                            <form class="form form-horizontal" action="{{URL::route('offers-submit')}}" method="POST">
-                                @csrf
-                                <div class="form-body">
-                                    <div class="row">
-                                        <input type="hidden" name="editOffersId" id="editOffersId">
-                                        
-                                        <label for="vendor_id" class="col-md-4 label-control">Vendor <span class="text-danger">*</span></label>
-                                        <div class="col-md-8 form-group">
-                                            <select name="vendor_id" id="vendor_id" class="select2 form-control @error('vendor_id') is-invalid @enderror">
-                                                <option value="">Select Vendor </option>
-                                                @if(count($vendor) > 0)
-                                                @foreach($vendor as $ven)
-                                                <option value="{{$ven->id}}">{{$ven->shop_name.' ('.$ven->name.')'}}</option>
-                                                @endforeach
-                                                @endif
-                                            </select>
-                                            @error('vendor_id')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <span>{{ $message }}</span>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        
-                                        <label for="start_date" class="col-md-4 label-control">Start Date <span class="text-danger">*</span></label>
-                                        <div class="col-md-8 form-group">
-                                            <input type="text" id="start_date" class="calsTotal form-control @error('start_date') is-invalid @enderror" name="start_date" autocomplete="off" readonly />
-                                            @error('start_date')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <span>{{ $message }}</span>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        
-                                        <label for="end_date" class="col-md-4 label-control">End Date <span class="text-danger">*</span></label>
-                                        <div class="col-md-8 form-group">
-                                            <input type="text" id="end_date" class="calsTotal form-control @error('end_date') is-invalid @enderror" name="end_date" autocomplete="off" readonly />
-                                            @error('end_date')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <span>{{ $message }}</span>
-                                                </span>
-                                            @enderror
-                                        </div>
-
-                                        <label for="offer_description" class="col-md-4 label-control">Description <span class="text-danger">*</span> 
-                                            <br><small>(offers short description)</small> </label>
-                                        <div class="col-md-8 form-group">
-                                            <textarea type="text" id="offer_description" class="form-control @error('offer_description') is-invalid @enderror" rows="8" name="offer_description" placeholder="Write something about offers...!" autocomplete="off" maxlength="200"></textarea>
-                                            @error('offer_description')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <span>{{ $message }}</span>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 d-flex justify-content-end">
-                                        <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-7 col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Offers List</h4>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-body">
-                            <div class="table-responsive">
+                    <div class="card-body">
+                        <div class="tab-content" id="pills-tabContent">
+                            <div class="tab-pane fade show active" id="offers-list" role="tabpanel" aria-labelledby="offers-list-tab">
                                 <table class="table table-hover table-bordered" id="offers-list-tbl">
                                     <thead class="text-nowrap">
                                         <tr>
@@ -125,6 +61,77 @@
             
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <div class="tab-pane fade" id="offers-add" role="tabpanel" aria-labelledby="offers-add-tab">
+                                <div class="col-md-12 col-12">
+                                    <div class="card">
+                                        <div class="card-content">
+                                            <div class="card-body">
+                                                <form class="form form-horizontal" action="{{URL::route('offers-submit')}}" method="POST">
+                                                    @csrf
+                                                    <div class="form-body">
+                                                        <div class="row">
+                                                            <input type="hidden" name="editOffersId" id="editOffersId">
+                                                            
+                                                            <label for="vendor_id" class="col-md-4 label-control">Vendor <span class="text-danger">*</span></label>
+                                                            <div class="col-md-8 form-group">
+                                                                <select name="vendor_id" id="vendor_id" class="select2 form-control @error('vendor_id') is-invalid @enderror">
+                                                                    <option value="">Select Vendor </option>
+                                                                    @if(count($vendor) > 0)
+                                                                    @foreach($vendor as $ven)
+                                                                    <option value="{{$ven->id}}">{{$ven->shop_name.' ('.$ven->name.')'}}</option>
+                                                                    @endforeach
+                                                                    @endif
+                                                                </select>
+                                                                @error('vendor_id')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <span>{{ $message }}</span>
+                                                                    </span>
+                                                                @enderror
+                                                            </div>
+                                                            
+                                                            <label for="start_date" class="col-md-4 label-control">Start Date <span class="text-danger">*</span></label>
+                                                            <div class="col-md-8 form-group">
+                                                                <input type="text" id="start_date" class="calsTotal form-control @error('start_date') is-invalid @enderror" name="start_date" autocomplete="off" readonly />
+                                                                @error('start_date')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <span>{{ $message }}</span>
+                                                                    </span>
+                                                                @enderror
+                                                            </div>
+                                                            
+                                                            <label for="end_date" class="col-md-4 label-control">End Date <span class="text-danger">*</span></label>
+                                                            <div class="col-md-8 form-group">
+                                                                <input type="text" id="end_date" class="calsTotal form-control @error('end_date') is-invalid @enderror" name="end_date" autocomplete="off" readonly />
+                                                                @error('end_date')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <span>{{ $message }}</span>
+                                                                    </span>
+                                                                @enderror
+                                                            </div>
+                    
+                                                            <label for="offer_description" class="col-md-4 label-control">Description <span class="text-danger">*</span> 
+                                                                <br><small>(offers short description)</small> </label>
+                                                            <div class="col-md-8 form-group">
+                                                                <textarea type="text" id="offer_description" class="form-control @error('offer_description') is-invalid @enderror" rows="8" name="offer_description" placeholder="Write something about offers...!" autocomplete="off" maxlength="200"></textarea>
+                                                                @error('offer_description')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <span>{{ $message }}</span>
+                                                                    </span>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-12 d-flex justify-content-end">
+                                                            <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -153,10 +160,17 @@
             });
         });
 
-        $('body').on('click','.remove-plans', function () {
+        CKEDITOR.replace( 'offer_description',{
+            toolbar: [
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'] },
+                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+            ]
+        });
+
+        $('body').on('click','.remove-offers', function () {
             var id = $(this).attr('data-id');
             swal({
-                title: "Are you sure, You want to delete this Plan ?",
+                title: "Are you sure, You want to delete this offers ?",
                 icon: "warning",
                 buttons: true,
                 dangerMode: true,
@@ -167,7 +181,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url : baseUrl+'/subscription-plans/delete',
+                        url : baseUrl+'/offers/delete',
                         type: 'delete',
                         data: {id:id},
                         success:function (re) {
@@ -175,14 +189,12 @@
                                 swal(re.message, {
                                     icon: "success",
                                 });
-                                $('#subscription-plan-tbl').DataTable().ajax.url(baseUrl+'/subscription-plans/list').load();
+                                $('#offers-list-tbl').DataTable().ajax.url(baseUrl+'/offers/list').load();
                             }
                             else {
                                 swal({
                                     title: re.message,
                                     icon: "warning",
-                                    // buttons: true,
-                                    // dangerMode: true,
                                 });
                             }
                         }
@@ -191,24 +203,29 @@
             });
         });
 
-        $('body').on('click','.edit-plans', function () {
+        $('body').on('click','.edit-offers', function () {
             var id = $(this).attr('data-id');
             $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url : baseUrl+'/subscription-plans/edit',
+                url : baseUrl+'/offers/edit',
                 type: 'get',
                 data: {id:id},
                 success:function (re) {
                     console.log(re);
                     if (re.status === true) {
-                        $('#editPlansId').val(re.data.id);
-                        $('#plan_name').val(re.data.name);
-                        $('#plan_validity').val(re.data.validity);
-                        $('#plan_amount').val(re.data.amount);
-                        $('#plan_tax').val(re.data.tax);
-                        $('#plan_total').val(re.data.total);
+                        $('#pills-tab').find('#offers-list-tab').removeClass('active');
+                        $('#pills-tab').find('#offers-add-tab').addClass('active');
+
+                        $('#pills-tabContent').find('.tab-pane').removeClass('show active');
+                        $('#pills-tabContent').find('#offers-add').addClass('show active');
+
+                        $('#editOffersId').val(re.data.id);
+                        $('#vendor_id').val(re.data.vendor_id).change();
+                        $('#start_date').val(re.data.start_date).change();
+                        $('#end_date').val(re.data.end_date).change();
+                        CKEDITOR.instances['offer_description'].setData(re.data.offer_desc);
                     }
                 }
             });
@@ -227,11 +244,6 @@
         });
         
         $(document).on('change, click','#start_date', function () {
-            // var startDate = $(this).val();
-            // startDate = new Date(startDate);
-            // var currDate = new Date();
-            // console.log(startDate);
-            // console.log(currDate);
             $("#end_date").daterangepicker({
                 singleDatePicker : true,
                 autoApply : true,

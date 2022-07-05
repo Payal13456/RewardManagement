@@ -74,8 +74,8 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item">
-                    <a href="#" class='sidebar-link'>
+                <li class="sidebar-item {{Request::segment(1) === 'push-notification' ? 'active' : ''}}">
+                    <a href="{{URL::route('push-notification')}}" class='sidebar-link'>
                         <i class="bi bi-grid-1x2-fill"></i>
                         <span>Push Notification</span>
                     </a>

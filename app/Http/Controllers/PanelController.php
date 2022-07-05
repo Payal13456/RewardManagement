@@ -16,7 +16,7 @@ use App\Models\Vendors;
 use App\Models\ShopEmail;
 use App\Models\ShopLandline;
 use App\Models\ShopMobileNo;
-use App\Models\shopCoverImage;
+use App\Models\ShopCoverImage;
 use App\Models\PlanCategory;
 use DataTables;
 use Illuminate\Validation\Validator;
@@ -309,7 +309,7 @@ class PanelController extends Controller
                                 'created_at'    =>  date('Y-m-d H:i:s'),
                                 'updated_at'    =>  date('Y-m-d H:i:s'),
                             );
-                            shopCoverImage::insert($coverImgArr);
+                            ShopCoverImage::insert($coverImgArr);
                         }
                     }
                 }
@@ -358,7 +358,7 @@ class PanelController extends Controller
                     }
                 }
                 \DB::commit();
-                return back()->with('success','Vendor Details added successfully.');
+                return \Redirect::to('/vendor-list')->with('success','Vendor Details updated successfully.');
             }
             else {
                 return back()->with('error','Failed to add Vendor Details.');
@@ -372,7 +372,7 @@ class PanelController extends Controller
     public function getAllVendorList (Request $request)
     {
         if ($request->ajax()) {
-            $data = Vendors::select('vendor.name','vendor.phone_code','vendor.mobile_no','vendor.email','vendor.shop_name','vendor.website','categories.name as cate_name','vendor.location','vendor.lat','vendor.long','vendor.status','vendor.is_blocked')
+            $data = Vendors::select('vendor.id','vendor.name','vendor.phone_code','vendor.mobile_no','vendor.email','vendor.shop_name','vendor.website','categories.name as cate_name','vendor.location','vendor.lat','vendor.long','vendor.status','vendor.is_blocked')
                     ->join('categories','vendor.category_id','=','categories.id')
                     ->orderBy('vendor.id','desc')
                     ->get();
@@ -405,7 +405,7 @@ class PanelController extends Controller
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="action-request badge bg-warning" data-action="approve" data-id="'.$row->id.'" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approve</a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Reject</a>
-                    <a href="javascript:void(0)" class="action-request badge bg-primary" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i>Edit</a>';
+                    <a href="'.url('/vendor/update').'/'.encrypt($row->id).'" class="badge bg-primary" data-action="edit" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i>Edit</a>';
                     return $action;
                 })
                 ->rawColumns(['website','location','status','mobileNo','action'])
@@ -417,8 +417,172 @@ class PanelController extends Controller
     {
         $cate = Categories::where('status',1)->get();
         $countryCode = CountryCode::select('phone_code')->groupBy('phone_code')->orderBy('phone_code','ASC')->get();
-        
-        return view ('vendor-create')->with('category',$cate)->with('countryCode',$countryCode);
+        $vendor = Vendors::find(decrypt($id));
+        $coverImg = ShopCoverImage::select('id','vendor_id','cover_image')->where('vendor_id',decrypt($id))->get();
+        $landLine = ShopLandline::select('id','vendor_id','phone_code','landline_no')->where('vendor_id',decrypt($id))->get();
+        $mobileNo = ShopMobileNo::select('id','vendor_id','phone_code','mobile_no')->where('vendor_id',decrypt($id))->get();
+        $emails = ShopEmail::select('id','vendor_id','shop_email')->where('vendor_id',decrypt($id))->get();
+
+        return view ('vendor-update',compact('cate','countryCode','vendor','coverImg','landLine','mobileNo','emails'));
+    }
+
+    public function removeVendorCoverImage (Request $request)
+    {
+        $coverImg = ShopCoverImage::find($request->imgId);
+        if($coverImg) {
+            if (\File::exists(public_path('/uploads/shop/cover/'.$coverImg->cover_image))) {
+                unlink(public_path('/uploads/shop/cover/'.$coverImg->cover_image));
+            }
+            $coverImg->delete();
+            return (['status' => true, 'message' => 'Removed successfully']);
+        }
+        return (['status' => false, 'message' => 'Failed to removed cover image']);
+    }
+
+    public function updateSelectedVendorDetails (Request $request)
+    {
+        $request->validate([
+            'name'              =>  'required|string',
+            'mobile_no_code'    =>  'required',
+            'mobile_no'         =>  'required',
+            'email'             =>  'required',
+            'category_id'       =>  'required',
+            'shop_name'         =>  'required',
+            'shop_website'      =>  'required|url',
+            'shop_landline_code'=>  'required',
+            'shop_landline'     =>  'required',
+            'shop_mob_code'     =>  'required',
+            'shop_mobile'       =>  'required',
+            'shop_email'        =>  'required',  
+            'location'          =>  'required',
+            'latitude'          =>  'required',
+            'longitude'         =>  'required',
+            'description'       =>  'required',
+        ], [
+            'name.required'     =>  'Vendor name must be required.',
+            'mobile_no_code.required'   =>  'Mobile Phone code must be required.',
+            'mobile_no.required'    =>  'Mobile Number must be required.',
+            'email.required'     =>  'Email must be required.',
+            'category_id.required'  =>  'Please select Category Id.',
+            'shop_name.required'    =>  'Shop Name must be required.',
+            'shop_website.required' =>  'Shop website url must be required.',
+            'shop_website.url'      =>  'Website url must be in valide url formt.',
+            'shop_landline_code.required'   =>  'Landline Phone code must be required.',
+            'shop_landline.required'    =>  'Landline must be required.',
+            'shop_mob_code.required'    =>  'Mobile Phone code must be required.',
+            'shop_mobile.required'      =>  'Mobile Number must be required.',
+            'shop_email.required'       =>  'Shop Email must be required.',  
+            'location.required'         =>  'Location must be required.',
+            'latitude.required'         =>  'Location latitude must be required.',
+            'longitude.required'        =>  'Location longitude must be required.',
+            'description.required'      =>  'Short Description must be required.',
+        ]);
+        try {
+            \DB::beginTransaction();
+            $shopLogo = $request->editShopLogo;
+            if($request->hasFile('shop_logo')) {
+                $shopLogo = \Str::random().'.'.time().'.'.$request->shop_logo->getClientOriginalExtension();
+                if (\File::exists(public_path('/uploads/shop/logo/'.$request->editShopLogo))) {
+                    unlink(public_path('/uploads/shop/logo/'.$request->editShopLogo));
+                }
+                $request->shop_logo->move(public_path('/uploads/shop/logo/'), $shopLogo);
+            }
+            $detailArr = array(
+                'name'      =>  ucwords($request->name),
+                'phone_code'=>  $request->mobile_no_code,
+                'mobile_no' =>  $request->mobile_no,
+                'email'     =>  $request->email,
+                'shop_name' =>  ucwords($request->shop_name),
+                'website'   =>  $request->shop_website,
+                'description'   =>  $request->name,
+                'category_id'   =>  $request->category_id,
+                'location'  =>  $request->location,
+                'lat'       =>  $request->latitude,
+                'long'      =>  $request->longitude,
+                'shop_logo' =>  $shopLogo,
+                'description' =>  $request->description,
+                'status'    =>  1,
+                'is_blocked'=>  1,
+                'updated_at'    =>  date('Y-m-d H:i:s'),
+            );
+            Vendors::where('id',$request->editVendorId)->update($detailArr);
+            if($request->editVendorId) {
+                if(isset($request->cover_img) && count($request->cover_img) > 0) {
+                    for($x=0; $x<count($request->cover_img); $x++) {
+                        $shopCoverLogo = null;
+                        if(!empty($request->cover_img[$x])) {
+                            if($request->hasFile('cover_img')) {
+                                $shopCoverLogo = \Str::random().'.'.time().'.'.$request->cover_img[$x]->getClientOriginalExtension();
+                                $request->cover_img[$x]->move(public_path('/uploads/shop/cover/'), $shopCoverLogo);
+                            }
+                            $coverImgArr = array(
+                                'vendor_id' =>  $request->editVendorId,
+                                'cover_image'   =>  $shopCoverLogo,
+                                'status'    =>  1,
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s'),
+                            );
+                            ShopCoverImage::insert($coverImgArr);
+                        }
+                    }
+                }
+                if(count($request->shop_landline) > 0) {
+                    ShopLandline::where('vendor_id',$request->editVendorId)->delete();
+                    for($i=0; $i<count($request->shop_landline); $i++) {
+                        if(!empty($request->shop_landline[$i])) {
+                            $landLineArr = array(
+                                'vendor_id' =>  $request->editVendorId,
+                                'phone_code'    =>  $request->shop_landline_code[$i],
+                                'landline_no'   =>  $request->shop_landline[$i],
+                                'status'    =>  1,
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s'),
+                            );
+                            ShopLandline::insert($landLineArr);
+                        }
+                    }
+                }
+                if(count($request->shop_mobile) > 0) {
+                    ShopMobileNo::where('vendor_id',$request->editVendorId)->delete();
+                    for($j=0; $j<count($request->shop_mobile); $j++) {
+                        if(!empty($request->shop_mobile[$j])) {
+                            $mobileArr = array(
+                                'vendor_id' =>  $request->editVendorId,
+                                'phone_code'    =>  $request->shop_mob_code[$j],
+                                'mobile_no'    =>  $request->shop_mobile[$j],
+                                'status'    =>  1,
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s'),
+                            );
+                            ShopMobileNo::insert($mobileArr);
+                        }
+                    }
+                }
+                if(count($request->shop_email) > 0) {
+                    ShopEmail::where('vendor_id',$request->editVendorId)->delete();
+                    for($a=0; $a<count($request->shop_email); $a++) {
+                        if(!empty($request->shop_email[$a])) {
+                            $emailArr = array(
+                                'vendor_id' =>  $request->editVendorId,
+                                'shop_email'   =>  $request->shop_email[$a],
+                                'status'    =>  1,
+                                'created_at'    =>  date('Y-m-d H:i:s'),
+                                'updated_at'    =>  date('Y-m-d H:i:s'),
+                            );
+                            ShopEmail::insert($emailArr);
+                        }
+                    }
+                }
+                \DB::commit();
+                return \Redirect::to('/vendor-list')->with('success','Vendor Details updated successfully.');
+            }
+            else {
+                return back()->with('error','Failed to update Vendor Details.');
+            }
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return back()->with('error',$e->getMessage());
+        }
     }
 
     public function getUsersAllDetails(Request $request)
@@ -712,9 +876,7 @@ class PanelController extends Controller
             $data = Offers::select('offers.id','offers.vendor_id','vendor.shop_name','offers.offer_desc','offers.start_date','offers.end_date','offers.status')
                     ->join('vendor','offers.vendor_id','=','vendor.id')
                     ->orderBy('offers.id','desc')->get();
-            // echo "<pre>";
-            // print_r($data);
-            // exit();
+                    
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
@@ -723,6 +885,10 @@ class PanelController extends Controller
                         $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
                     }
                     return $status;
+                })
+                ->addColumn('offer_desc', function($row){
+                    $offer_desc = strip_tags(html_entity_decode($row->offer_desc));
+                    return $offer_desc;
                 })
                 ->addColumn('start_date', function($row){
                     $startDate = date('d-m-Y',strtotime($row->start_date));
@@ -733,8 +899,8 @@ class PanelController extends Controller
                     return $endDate;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="remove-plans badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="edit-plans badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
+                    $action = '<a href="javascript:void(0)" class="remove-offers badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="edit-offers badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
                     return $action;
                 })
                 ->rawColumns(['status','start_date','end_date','action'])
@@ -839,8 +1005,55 @@ class PanelController extends Controller
         }
     }
 
+    public function deleteSelectedOffers (Request $request)
+    {
+        $offers = Offers::find($request->id);
+        if($offers) {
+            $offers->delete();
+            return (['status' => true, 'message' => 'Offers deleted successfully.']);
+        }
+        return (['status' => false, 'message' => 'Failed to delete Offers.']);
+    }
 
+    public function editSelectedOffers (Request $request)
+    {
+        $offers = Offers::find($request->id);
+        if($offers) {
+            $offers->start_date = date('d-m-Y', strtotime($offers->start_date));
+            $offers->end_date = date('d-m-Y', strtotime($offers->end_date));
+            
+            return (['status' => true, 'message' => 'Record found.', 'data'=>$offers]);
+        }
+        return (['status' => false, 'message' => 'No Record found.', 'data'=>[] ]);
+    }
 
+    public function getPushNotificationList (Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Notification::latest()->get();                    
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('status', function($row){
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    if($row->status == 0) {
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('msg', function($row){
+                    $msg = strip_tags(html_entity_decode($row->msg));                    
+                    return $msg;
+                })
+                ->addColumn('users', function($row){
+                    // $receiver = User::select('name')->whereIn('id',[$row->received_id])->get();
+
+                    // $users = implode(',',$receiver->name);
+                    // return $users;
+                })
+                ->rawColumns(['status','users'])
+                ->make(true);
+        }
+    }
 
 
 
