@@ -25,13 +25,15 @@ Route::group(['Prefix' => '/'], function () {
         
         Route::view('/users-list', 'user-list')->name('users-list');
         Route::get('/users-list/all', [App\Http\Controllers\PanelController::class, 'getAllUsersList'])->name('users-list-all');
-        Route::put('/users-list/{action}', [App\Http\Controllers\PanelController::class, 'userBlockUnblock'])->name('users-action');
+        Route::put('/users-list/block-unblock', [App\Http\Controllers\PanelController::class, 'userBlockUnblock'])->name('users-action-block-unblock');
+        Route::put('/users-list/active-deactive', [App\Http\Controllers\PanelController::class, 'userActiveDeactive'])->name('users-action-active-deactive');
         Route::get('/users-detail', [App\Http\Controllers\PanelController::class, 'getUsersAllDetails'])->name('users-detail');
         
         Route::view('/category', 'category')->name('category');
         Route::post('/category/submit',[App\Http\Controllers\PanelController::class, 'createNewCategory'])->name('category-submit');
         Route::get('/category-list/all', [App\Http\Controllers\PanelController::class, 'getAllCategoryList'])->name('category-list-all');
         Route::delete('/category-list/delete', [App\Http\Controllers\PanelController::class, 'deleteSelectedCategory'])->name('category-list-delete');
+        Route::put('/category-list/active-deactive', [App\Http\Controllers\PanelController::class, 'activeDeactiveSelectedCategory'])->name('category-list-active-deactive');
         Route::get('/category-list/edit', [App\Http\Controllers\PanelController::class, 'editSelectedCategory'])->name('category-list-edit');
 
         Route::get('/vendor', [App\Http\Controllers\PanelController::class, 'createNewVendor'])->name('vendor');
@@ -55,6 +57,7 @@ Route::group(['Prefix' => '/'], function () {
         Route::get('/offers/list', [App\Http\Controllers\PanelController::class, 'getAllOffersList'])->name('offers-list');
         Route::post('/offers/submit', [App\Http\Controllers\PanelController::class, 'newOffersDetailSubmit'])->name('offers-submit');
         Route::delete('/offers/delete', [App\Http\Controllers\PanelController::class, 'deleteSelectedOffers'])->name('offers-delete');
+        Route::put('/offers/active-deactive', [App\Http\Controllers\PanelController::class, 'activeDeactiveSelectedOffers'])->name('offers-active-deactive');
         Route::get('/offers/edit', [App\Http\Controllers\PanelController::class, 'editSelectedOffers'])->name('offers-edit');
         Route::post('/offers/update', [App\Http\Controllers\PanelController::class, 'selectedOffersDetailUpdate'])->name('offers-update');
 

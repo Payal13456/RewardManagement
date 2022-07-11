@@ -141,6 +141,13 @@
     </section>    
 </div>
 @endsection
+@push('style')
+<style>
+    .select2.select2-container {
+        width: 100% !important;
+    }
+</style>
+@endpush
 @push('script')
     <script type="text/javascript">
         $(document).ready(function() {
@@ -187,6 +194,44 @@
                         success:function (re) {
                             if (re.status === true) {
                                 swal(re.message, {
+                                    icon: "success",
+                                });
+                                $('#offers-list-tbl').DataTable().ajax.url(baseUrl+'/offers/list').load();
+                            }
+                            else {
+                                swal({
+                                    title: re.message,
+                                    icon: "warning",
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        $('body').on('click','.activeDeactiveOffers', function () {
+            var id = $(this).attr('data-id');
+            var action = $(this).attr('data-action');
+            swal({
+                title: "Are you sure, You want to "+action+" this offers ?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url : baseUrl+'/offers/active-deactive',
+                        type: 'put',
+                        data: {id:id,action:action},
+                        success:function (re) {
+                            if (re.status === true) {
+                                swal({
+                                    title:re.message, 
                                     icon: "success",
                                 });
                                 $('#offers-list-tbl').DataTable().ajax.url(baseUrl+'/offers/list').load();

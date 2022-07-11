@@ -30,13 +30,20 @@ class PanelController extends Controller
         $blockedUsers = User::where('role',2)->where('is_blocked',1)->count();
 
         $countryArr = [];
-        $country = CountryCode::select('country_name')->orderBy('country_name','ASC')->get();
+        $userCountArr = [];
+        $country = CountryCode::select('country_codes.country_name','country_codes.phone_code')
+                ->join('users', 'country_codes.phone_code','=','users.phone_code')
+                ->where('users.role',2)
+                ->groupBy('country_codes.country_name')->get();
         if(count($country) > 0) {
             foreach($country as $ctry) {
+                $userCount = User::where('phone_code',$ctry->phone_code)->where('role',2)->count();
                 array_push($countryArr, $ctry->country_name);
+                array_push($userCountArr, $userCount);
             }
         }
-        return view ('dashboard', compact('users','vendor','blockedUsers','countryArr'));
+        
+        return view ('dashboard', compact('users','vendor','blockedUsers','countryArr','userCountArr'));
     }
 
     public function getAllUsersList (Request $request)
@@ -58,51 +65,86 @@ class PanelController extends Controller
                     return $dob;
                 })
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-success" ><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger" ><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
-                ->addColumn('process', function($row){
-                    $action = '<span class="badge bg-danger blockUnblockUser cursor-point" data-action="block" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Block User">
-                        <i class="fa fa-ban">&nbsp;&nbsp;</i>
-                        Block
-                    </span> &nbsp;&nbsp; 
-                    <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
-                    <i class="fa fa-street-view">&nbsp;&nbsp;</i>
-                        View
-                    </span>';
-                    if($row->status == 0) {
-                        $action = '<span class="badge bg-success blockUnblockUser cursor-point" data-action="unblock" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock User">
-                        <i class="fa fa-check-circle">&nbsp;&nbsp;</i>
+                ->addColumn('blockStatus', function($row){
+                    if($row->is_blocked == 0) {
+                        $action = '<span class="badge bg-success" data-action="unblock" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock User">
+                            <i class="fa fa-check-circle">&nbsp;&nbsp;</i>
                             Unblock
-                        </span> &nbsp;&nbsp;
-                        <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
-                        <i class="fa fa-street-view">&nbsp;&nbsp;</i>
-                            View
+                        </span>';
+                    }
+                    if($row->is_blocked == 1) {
+                        $action = '<span class="badge bg-danger" data-action="block" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Block User">
+                            <i class="fa fa-ban">&nbsp;&nbsp;</i>
+                            Block
                         </span>';
                     }
                     return $action;
                 })
-                ->rawColumns(['location','dob','mobile_no','status','process'])
+                ->addColumn('process', function($row){
+                    if($row->is_blocked == 0) {
+                        $action = '<span class="badge bg-danger blockUnblockUser cursor-point" data-action="block" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Block User">
+                        <i class="fa fa-ban">&nbsp;&nbsp;</i>
+                            Block
+                        </span>';
+                    }
+                    if($row->is_blocked == 1) {
+                        $action = '<span class="badge bg-success blockUnblockUser cursor-point" data-action="unblock" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock User">
+                            <i class="fa fa-check-circle">&nbsp;&nbsp;</i>
+                            Unblock
+                        </span>';
+                    }
+                    if($row->status == 2) {
+                        $action .= '&nbsp;&nbsp; <span class="activeDeactiveUser cursor-point badge bg-danger" data-action="deactive" data-id="'.$row->id.'"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
+                    } 
+                    if($row->status == 0) {
+                        $action .= '&nbsp;&nbsp; <span class="activeDeactiveUser cursor-point badge bg-success" data-action="active" data-id="'.$row->id.'"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    }
+                    $action .= '&nbsp;&nbsp;
+                    <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
+                    <i class="fa fa-street-view">&nbsp;&nbsp;</i>
+                        View
+                    </span>';
+                    return $action;
+                })
+                ->rawColumns(['location','dob','mobile_no','status','process','blockStatus'])
                 ->make(true);
         }
     }
 
     public function userBlockUnblock (Request $request)
     {
-        $action = User::where('id',$request->id)->where('role',2)->first();
+        $action = User::where('id',$request->id)->where('role',2)->first();        
         if($action) {
             if($request->action === 'block') {
-                User::where('id',$request->id)->where('role',2)->update(['is_blocked' => 1, 'status' => 0]);
+                User::where('id',$request->id)->where('role',2)->update(['is_blocked' => 1]);
             }
             if($request->action === 'unblock') {
-                User::where('id',$request->id)->where('role',2)->update(['is_blocked' => 0, 'status' => 1]);
+                User::where('id',$request->id)->where('role',2)->update(['is_blocked' => 0]);
             }
             return (['status' => true, 'message' => 'User '.$request->action.'ed successfully.']);
         }
         return (['status' => false, 'message' => 'Failed to User '.$request->action.'ed.']);
+    }
+
+    public function userActiveDeactive (Request $request)
+    {
+        $action = User::where('id',$request->id)->where('role',2)->first();
+        if($action) {
+            if($request->action === 'active') {
+                User::where('id',$request->id)->where('role',2)->update(['status' => 2]);
+            }
+            if($request->action === 'deactive') {
+                User::where('id',$request->id)->where('role',2)->update(['status' => 0]);
+            }
+            return (['status' => true, 'message' => 'User '.$request->action.'d successfully.']);
+        }
+        return (['status' => false, 'message' => 'Failed to User '.$request->action.'d.']);
     }
     
     public function createNewCategory (Request $request)
@@ -183,8 +225,14 @@ class PanelController extends Controller
                     return $image;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="remove-category badge bg-danger" data-id="'.$row->id.'" ><i class="bi bi-trash">&nbsp;&nbsp;</i>Delete</a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="edit-category badge bg-success" data-id="'.$row->id.'" ><i class="bi bi-pencil-square">&nbsp;&nbsp;</i>Edit</a>';
+                    $action = '<a href="javascript:void(0)" class="remove-category badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i>Delete</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="edit-category badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i>Edit</a>';
+                    
+                    if($row->status == 0) {
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="active" data-id="'.$row->id.'" class="activeDeactiveCategory badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</a>';
+                    } else if($row->status == 1) {
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactive" data-id="'.$row->id.'" class="activeDeactiveCategory badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</a>';
+                    }
                     return $action;
                 })
                 ->rawColumns(['status','action','image'])
@@ -214,6 +262,21 @@ class PanelController extends Controller
             return (['status' => true, 'message' => 'Record found.', 'data'=>$cate]);
         }
         return (['status' => false, 'message' => 'No Record found.', 'data'=>[] ]);
+    }
+
+    public function activeDeactiveSelectedCategory (Request $request)
+    {
+        $action = Categories::where('id',$request->id)->first();
+        if($action) {
+            if($request->action === 'active') {
+                Categories::where('id',$request->id)->update(['status' => 1]);
+            }
+            if($request->action === 'deactive') {
+                Categories::where('id',$request->id)->update(['status' => 0]);
+            }
+            return (['status' => true, 'message' => 'Category '.$request->action.'d successfully.']);
+        }
+        return (['status' => false, 'message' => 'Failed to Category '.$request->action.'d.']);
     }
 
     public function createNewVendor (Request $request)
@@ -403,8 +466,8 @@ class PanelController extends Controller
                     return $location;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="action-request badge bg-warning" data-action="approve" data-id="'.$row->id.'" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approve</a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Reject</a>
+                    $action = '<a href="javascript:void(0)" class="actionRequestVendor badge bg-warning" data-action="approve" data-id="'.$row->id.'" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approve</a> &nbsp;&nbsp;
+                    <a href="javascript:void(0)" class="actionRequestVendor badge bg-danger" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Reject</a>
                     <a href="'.url('/vendor/update').'/'.encrypt($row->id).'" class="badge bg-primary" data-action="edit" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i>Edit</a>';
                     return $action;
                 })
@@ -882,7 +945,7 @@ class PanelController extends Controller
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
@@ -901,6 +964,11 @@ class PanelController extends Controller
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="remove-offers badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="edit-offers badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
+                    if($row->status == 0) {
+                        $action .= '&nbsp;&nbsp;<span class="activeDeactiveOffers cursor-point badge bg-success" data-id="'.$row->id.'" data-action="active"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    } else if($row->status == 1) {
+                        $action .= '&nbsp;&nbsp;<span class="activeDeactiveOffers cursor-point badge bg-danger" data-id="'.$row->id.'" data-action="deactive"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
+                    }
                     return $action;
                 })
                 ->rawColumns(['status','start_date','end_date','action'])
@@ -1025,6 +1093,21 @@ class PanelController extends Controller
             return (['status' => true, 'message' => 'Record found.', 'data'=>$offers]);
         }
         return (['status' => false, 'message' => 'No Record found.', 'data'=>[] ]);
+    }
+    
+    public function activeDeactiveSelectedOffers (Request $request)
+    {
+        $action = Offers::where('id',$request->id)->first();
+        if($action) {
+            if($request->action === 'active') {
+                Offers::where('id',$request->id)->update(['status' => 1]);
+            }
+            if($request->action === 'deactive') {
+                Offers::where('id',$request->id)->update(['status' => 0]);
+            }
+            return (['status' => true, 'message' => 'Offers '.$request->action.'d successfully.']);
+        }
+        return (['status' => false, 'message' => 'Failed to Offers '.$request->action.'d.']);
     }
 
     public function getPushNotificationList (Request $request)

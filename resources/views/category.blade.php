@@ -159,7 +159,44 @@
                     data: {id:id},
                     success:function (re) {
                         if (re.status === true) {
-                            swal(re.message, {
+                            swal({
+                                title:re.message, 
+                                icon: "success",
+                            });
+                            $('#category-list-tbl').DataTable().ajax.url(baseUrl+'/category-list/all').load();
+                        }
+                        else {
+                            swal(re.message);
+                        }
+                    }
+                });
+            }
+        })
+    });
+
+    $('body').on('click','.activeDeactiveCategory', function () {
+        var id = $(this).attr('data-id');
+        var action = $(this).attr('data-action');
+
+        swal({
+            title: "Are you sure, You want to "+action+" this category ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url : baseUrl+'/category-list/active-deactive',
+                    type: 'put',
+                    data: {id:id,action:action},
+                    success:function (re) {
+                        if (re.status === true) {
+                            swal({
+                                title:re.message, 
                                 icon: "success",
                             });
                             $('#category-list-tbl').DataTable().ajax.url(baseUrl+'/category-list/all').load();

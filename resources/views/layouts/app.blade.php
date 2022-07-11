@@ -90,7 +90,23 @@
                 icon: "success",
             });
         @endif
+
+        $(document).on('click','#confirmLogout', function () {
+            swal({
+                title: "Do you really want to exit ?",
+                icon: "warning",
+                // buttons: true,
+                buttons: ["No", "Yes"],
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    window.location.href = baseUrl+'/logout';
+                }
+            });
+        });
     </script>
+    @stack('style')
     @stack('script')
     
 </body>

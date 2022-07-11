@@ -15,12 +15,13 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
 
-                <li class="sidebar-item {{Request::segment(1) === '/' ? 'active' : ''}}">
+                <li class="sidebar-item {{Request::segment(1) == '/' ? 'active' : ''}}">
                     <a href="{{URL::route('/')}}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
+
                 <li class="sidebar-item has-sub {{in_array(Request::segment(1), array('users-list','message-to-users')) ? 'active' : ''}}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person"></i>
@@ -39,7 +40,8 @@
 
                     </ul>
                 </li>
-                <li class="sidebar-item  has-sub {{in_array(Request::segment(1), array('category','vendor','vendor-list','offers')) ? 'active' : ''}}">
+
+                <li class="sidebar-item  has-sub {{in_array(Request::segment(1), array('category','vendor','vendor-list','offers')) ? 'active':''}}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person-badge"></i>
                         <span>Vendor</span>
@@ -88,8 +90,8 @@
                     </a>
                 </li>
                 
-                <li class="sidebar-item">
-                    <a href="{{ URL::route('logout') }}" class='sidebar-link'>
+                <li class="sidebar-item" id="confirmLogout">
+                    <a href="javascript:void(0)" class='sidebar-link'>
                         <i class="fa fa-sign-out"></i>
                         <span>Logout</span>
                     </a>

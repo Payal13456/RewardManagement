@@ -296,8 +296,8 @@
         plotOptions: {
         },
         series: [{
-            name: 'sales',
-            data: [9,20,30,20,10,20,30,20,10,20,30,20]
+            name: 'Total Users',
+            data: @json($userCountArr)
         }],
         colors: '#435ebe',
         xaxis: {

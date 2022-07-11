@@ -45,6 +45,7 @@
                                     <th>Address</th>
                                     <th>Referal Code</th>
                                     <th>Status</th>
+                                    <th>Block Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -111,6 +112,7 @@
                     { data: 'address', name: 'address' },
                     { data: 'referal_code', name: 'referal_code' },
                     { data: 'status', name: 'status', orderable: false, searchable: false },
+                    { data: 'blockStatus', name: 'blockStatus', orderable: false, searchable: false },
                     { data: 'process', name: 'process', orderable: false, searchable: false },
                 ]
             });
@@ -131,7 +133,7 @@
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: baseUrl + '/users-list/' + action,
+                            url: baseUrl + '/users-list/block-unblock',
                             type: 'put',
                             data: {
                                 action: action,
@@ -139,7 +141,45 @@
                             },
                             success: function(re) {
                                 if (re.status === true) {
-                                    swal(re.message, {
+                                    swal({
+                                        title: re.message, 
+                                        icon: "success",
+                                    });
+                                    $('#user-list-tbl').DataTable().ajax.url(baseUrl+'/users-list/all').load();
+                                } else {
+                                    swal(re.message);
+                                }
+                            }
+                        });
+                    }
+                })
+        });
+
+        $('body').on('click', '.activeDeactiveUser', function() {
+            var action = $(this).attr('data-action');
+            var id = $(this).attr('data-id');
+            swal({
+                    title: "Are you sure, You want to " + action + " this user ?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: baseUrl + '/users-list/active-deactive',
+                            type: 'put',
+                            data: {
+                                action: action,
+                                id: id
+                            },
+                            success: function(re) {
+                                if (re.status === true) {
+                                    swal({
+                                        title: re.message, 
                                         icon: "success",
                                     });
                                     $('#user-list-tbl').DataTable().ajax.url(baseUrl+'/users-list/all').load();

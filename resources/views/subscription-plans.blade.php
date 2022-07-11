@@ -192,7 +192,13 @@
     </section>    
 </div>
 @endsection
-
+@push('style')
+<style>
+    .select2.select2-container {
+        width: 100% !important;
+    }
+</style>
+@endpush
 @push('script')
     <script type="text/javascript">
         $(document).ready(function() {

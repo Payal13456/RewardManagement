@@ -1,4 +1,5 @@
 @extends('layouts.auth-app')
+@section('title') Login | {{ config('app.name') }} @endsection
 
 @section('content')
 <div class="row h-100">
