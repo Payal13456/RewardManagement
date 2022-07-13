@@ -69,5 +69,10 @@ Route::group(['Prefix' => '/'], function () {
 
         Route::view('/push-notification','push-notification')->name('push-notification');
         Route::get('/push-notification/list',[App\Http\Controllers\PanelController::class, 'getPushNotificationList'])->name('push-notification-list');
+        
+        Route::view('/reports-and-feedback','reports-and-feedback')->name('reports-and-feedback');
+        Route::get('/reports-and-feedback/list',[App\Http\Controllers\PanelController::class, 'getReportAndFeedbackList'])->name('reports-and-feedback-list');
+
+
     });
 });

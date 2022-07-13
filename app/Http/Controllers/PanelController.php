@@ -18,6 +18,7 @@ use App\Models\ShopLandline;
 use App\Models\ShopMobileNo;
 use App\Models\ShopCoverImage;
 use App\Models\PlanCategory;
+use App\Models\Feedback;
 use DataTables;
 use Illuminate\Validation\Validator;
 
@@ -32,12 +33,12 @@ class PanelController extends Controller
         $countryArr = [];
         $userCountArr = [];
         $country = CountryCode::select('country_codes.country_name','country_codes.phone_code')
-                ->join('users', 'country_codes.phone_code','=','users.phone_code')
+                ->join('users', 'country_codes.phone_code','=','users.country_code')
                 ->where('users.role',2)
                 ->groupBy('country_codes.country_name')->get();
         if(count($country) > 0) {
             foreach($country as $ctry) {
-                $userCount = User::where('phone_code',$ctry->phone_code)->where('role',2)->count();
+                $userCount = User::where('country_code',$ctry->phone_code)->where('role',2)->count();
                 array_push($countryArr, $ctry->country_name);
                 array_push($userCountArr, $userCount);
             }
@@ -53,11 +54,14 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('location', function($row){
-                    $location = $row->location.', <br>lat : '.$row->latitude.', long : '.$row->longitude;
+                    $location = '';
+                    if(!empty($row->location)) {
+                        $location = $row->location.', <br>lat : '.$row->latitude.', long : '.$row->longitude;
+                    }
                     return $location;
                 })
                 ->addColumn('mobile_no', function($row){
-                    $mobileNo = '+'.$row->phone_code.'-'.$row->mobile_no;
+                    $mobileNo = '+'.$row->country_code.'-'.$row->mobile_no;
                     return $mobileNo;
                 })
                 ->addColumn('dob', function($row){
@@ -149,15 +153,24 @@ class PanelController extends Controller
     
     public function createNewCategory (Request $request)
     {
-        $request->validate([
-            'category_name' =>  'required|string',
-            'category_img' =>  'required|mimes:png,jpg,jpeg,svg'
-        ],[
-            'category_name.required'    =>  'Category name should not be blank.',
-            'category_name.unique'      =>  'Category name is alredy exist, Try another.',
-            'category_img.required'     =>  'Please select image for Category',
-            'category_img.mimes'     =>  'Image type must be like png,jpg,jpeg,svg'
-        ]);
+        if($request->editCategoryId <= 0) {
+            $request->validate([
+                'category_name' =>  'required|string',
+                'category_img' =>  'required|mimes:png,jpg,jpeg,svg'
+            ],[
+                'category_name.required'    =>  'Category name should not be blank.',
+                'category_name.unique'      =>  'Category name is alredy exist, Try another.',
+                'category_img.required'     =>  'Please select image for Category',
+                'category_img.mimes'     =>  'Image type must be like png,jpg,jpeg,svg'
+            ]);
+        } else if($request->editCategoryId > 0) {
+            $request->validate([
+                'category_name' =>  'required|string',
+            ],[
+                'category_name.required'    =>  'Category name should not be blank.',
+                'category_name.unique'      =>  'Category name is alredy exist, Try another.',
+            ]);
+        }
         try {
             if($request->editCategoryId <= 0) {
                 $getCate = Categories::where('name',$request->category_name)->count();
@@ -184,9 +197,12 @@ class PanelController extends Controller
                 }
             }
             else if($request->editCategoryId > 0) {
-                $cateImg = $request->editCategoryimg;
+                $cateImg = $request->editCategoryImg; 
                 if($request->hasFile('category_img')) {
                     $cateImg = \Str::random().'.'.time().'.'.$request->category_img->getClientOriginalExtension();
+                    if(\File::exists(public_path('/uploads/category/'.$request->editCategoryImg))) {
+                        unlink(public_path('/uploads/category/'.$request->editCategoryImg));
+                    }
                     $request->category_img->move(public_path('/uploads/category/'),$cateImg);
                 }
                 if(Categories::where('id',$request->editCategoryId)->update([
@@ -213,7 +229,7 @@ class PanelController extends Controller
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
@@ -307,6 +323,9 @@ class PanelController extends Controller
             'longitude'         =>  'required',
             'cover_img'         =>  'required',
             'shop_logo'         =>  'required',
+            'opening_time'      =>  'required',
+            'closing_time'      =>  'required',
+            'shop_logo'         =>  'required',
             'description'       =>  'required',
         ], [
             'name.required'     =>  'Vendor name must be required.',
@@ -327,6 +346,8 @@ class PanelController extends Controller
             'longitude.required'        =>  'Location longitude must be required.',
             'cover_img.required'        =>  'Cover Image must be required.',
             'shop_logo.required'        =>  'Shop Logo must be required.',
+            'opening_time.required'     =>  'Opening Time must be required',
+            'closing_time.required'     =>  'Closing Time must be required',
             'description.required'      =>  'Short Description must be required.',
         ]);
         try {
@@ -349,6 +370,8 @@ class PanelController extends Controller
                 'lat'       =>  $request->latitude,
                 'long'      =>  $request->longitude,
                 'shop_logo' =>  $shopLogo,
+                'opening_time' =>  $request->opening_time,
+                'closing_time' =>  $request->closing_time,
                 'description' =>  $request->description,
                 'status'    =>  1,
                 'is_blocked'=>  1,
@@ -421,7 +444,7 @@ class PanelController extends Controller
                     }
                 }
                 \DB::commit();
-                return \Redirect::to('/vendor-list')->with('success','Vendor Details updated successfully.');
+                return \Redirect::to('/vendor-list')->with('success','Vendor Details added successfully.');
             }
             else {
                 return back()->with('error','Failed to add Vendor Details.');
@@ -520,6 +543,8 @@ class PanelController extends Controller
             'location'          =>  'required',
             'latitude'          =>  'required',
             'longitude'         =>  'required',
+            'opening_time'      =>  'required',
+            'closing_time'      =>  'required',
             'description'       =>  'required',
         ], [
             'name.required'     =>  'Vendor name must be required.',
@@ -538,6 +563,8 @@ class PanelController extends Controller
             'location.required'         =>  'Location must be required.',
             'latitude.required'         =>  'Location latitude must be required.',
             'longitude.required'        =>  'Location longitude must be required.',
+            'opening_time.required'     =>  'Opening Time must be required',
+            'closing_time.required'     =>  'Closing Time must be required',
             'description.required'      =>  'Short Description must be required.',
         ]);
         try {
@@ -563,6 +590,8 @@ class PanelController extends Controller
                 'lat'       =>  $request->latitude,
                 'long'      =>  $request->longitude,
                 'shop_logo' =>  $shopLogo,
+                'opening_time' =>  $request->opening_time,
+                'closing_time' =>  $request->closing_time,
                 'description' =>  $request->description,
                 'status'    =>  1,
                 'is_blocked'=>  1,
@@ -1138,6 +1167,20 @@ class PanelController extends Controller
         }
     }
 
-
+    public function getReportAndFeedbackList (Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Feedback::select('feedback.title','feedback.user_id','users.name as username','feedback.description','feedback.created_at')
+                ->join('users','feedback.user_id','=','users.id')->orderBy('feedback.id', 'desc')->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('reportDate', function($row){
+                    $date = date('d F, Y', strtotime($row->created_at));
+                    return $date;
+                })
+                ->rawColumns(['reportDate'])
+                ->make(true);
+        }
+    }
 
 }

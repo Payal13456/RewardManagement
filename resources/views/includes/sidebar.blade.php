@@ -15,7 +15,7 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
 
-                <li class="sidebar-item {{Request::segment(1) == '/' ? 'active' : ''}}">
+                <li class="sidebar-item {{!in_array(Request::segment(1), array('reports-and-feedback','users-list','message-to-users','category','vendor','vendor-list','offers','subscription-plans','push-notification','reedem-request')) ? 'active' : ''}}">
                     <a href="{{URL::route('/')}}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
@@ -27,7 +27,7 @@
                         <i class="bi bi-person"></i>
                         <span>User</span>
                     </a>
-                    <ul class="submenu ">
+                    <ul class="submenu " style="{{in_array(Request::segment(1), array('users-list','message-to-users')) ? 'display: block' : 'display:none'}}" >
                         <li class="submenu-item {{Request::segment(1) === 'users-list' ? 'active' : ''}}">
                             <a href="{{URL::route('users-list')}}">List User</a>
                         </li>
@@ -46,7 +46,7 @@
                         <i class="bi bi-person-badge"></i>
                         <span>Vendor</span>
                     </a>
-                    <ul class="submenu ">
+                    <ul class="submenu " style="{{in_array(Request::segment(1), array('category','vendor','vendor-list','offers')) ? 'display: block' : 'display:none'}}">
                         <li class="submenu-item {{Request::segment(1) === 'category' ? 'active' : ''}}">
                             <a href="{{URL::route('category')}}">Category</a>
                         </li>
@@ -68,11 +68,11 @@
                         <span>Subsctiption Plan</span>
                     </a>
                 </li>
-                
-                <li class="sidebar-item ">
-                    <a href="#" class='sidebar-link'>
+
+                <li class="sidebar-item {{Request::segment(1) === 'reports-and-feedback' ? 'active' : ''}}">
+                    <a href="{{URL::route('reports-and-feedback')}}" class='sidebar-link'>
                         <i class="bi bi-collection-fill"></i>
-                        <span>Reports / Feedback </span>
+                        <span>Reports / Feedback</span>
                     </a>
                 </li>
 

@@ -205,28 +205,40 @@
                 success: function(re) {
                     if (re.status === true) {
                         $('#viewDetailsModalTitle').text('').text('User : '+re.userDt.name);
+                        var location = '--';
+                        var emiratesId = '--';
+                        var passportNo = '--';
+                        var mobileNo = '--';
+                        var emailAddress = '--';
+                        var dateOfBirth = '--';
+                        if(re.userDt.location !== null) { location = re.userDt.location; }
+                        if(re.userDt.emirates_id !== null) { emiratesId = re.userDt.emirates_id; }
+                        if(re.userDt.passport_no !== null) { passportNo = re.userDt.passport_no; }
+                        if(re.userDt.email !== null) { emailAddress = re.userDt.email; }
+                        if(re.userDt.dob !== null) { dateOfBirth = re.userDt.dob; }
+                        if(re.userDt.mobile_no !== null) { mobileNo = '+'+re.userDt.country_code+'-'+re.userDt.mobile_no; }
                         var userProfile = '<div class="card card-primary card-outline">'+
                             '<div class="card-body box-profile">'+
                                 '<div class="text-center">'+
                                     '<img class="profile-user-img img-fluid img-circle" src="{{asset('public/assets/images/faces/2.jpg')}}" alt="User profile picture">'+
                                 '</div>'+
                                 '<h3 class="profile-username text-center">'+re.userDt.name+'</h3>'+
-                                '<p class="text-muted text-center">'+re.userDt.location+'</p>'+
+                                '<p class="text-muted text-center">'+location+'</p>'+
                                 '<ul class="list-group list-group-unbordered mb-3">'+
                                     '<li class="list-group-item">'+
-                                        '<b>Mobile No</b> <a class="float-end" href="tel:'+re.userDt.mobile_no+'">'+re.userDt.mobile_no+'</a>'+
+                                        '<b>Mobile No</b> <a class="float-end" href="tel:'+mobileNo+'">'+mobileNo+'</a>'+
                                     '</li>'+
                                     '<li class="list-group-item">'+
-                                        '<b>Email</b> <a class="float-end" href="mailto:'+re.userDt.email+'">'+re.userDt.email+'</a>'+
+                                        '<b>Email</b> <a class="float-end" href="mailto:'+emailAddress+'">'+emailAddress+'</a>'+
                                     '</li>'+
                                     '<li class="list-group-item">'+
-                                        '<b>DOB</b> <a class="float-end">'+re.userDt.dob+'</a>'+
+                                        '<b>DOB</b> <a class="float-end">'+dateOfBirth+'</a>'+
                                     '</li>'+
                                     '<li class="list-group-item">'+
-                                        '<b>Emirates Id</b> <a class="float-end">--</a>'+
+                                        '<b>Emirates Id</b> <a class="float-end">'+emiratesId+'</a>'+
                                     '</li>'+
                                     '<li class="list-group-item">'+
-                                        '<b>Passport No</b> <a class="float-end">--</a>'+
+                                        '<b>Passport No</b> <a class="float-end">'+passportNo+'</a>'+
                                     '</li>'+
                                 '</ul>'+
                             '</div>'+
@@ -244,9 +256,9 @@
                                     '<li class="nav-item cursor-point" role="presentation">'+
                                         '<span class="nav-link" id="referral-history-tab" data-bs-toggle="pill" data-bs-target="#referral-history" role="tab" aria-controls="referral-history" aria-selected="false">Referral History</span>'+
                                     '</li>'+
-                                    '<li class="nav-item cursor-point" role="presentation">'+
-                                        '<span class="nav-link" id="referral-history-tab" data-bs-toggle="pill" data-bs-target="#referral-history" role="tab" aria-controls="referral-history" aria-selected="false">Wallet</span>'+
-                                    '</li>'+
+                                    // '<li class="nav-item cursor-point" role="presentation">'+
+                                    //     '<span class="nav-link" id="referral-history-tab" data-bs-toggle="pill" data-bs-target="#referral-history" role="tab" aria-controls="referral-history" aria-selected="false">Wallet</span>'+
+                                    // '</li>'+
                                 '</ul>'+
                             '</div>'+
                             '<div class="card-body">'+

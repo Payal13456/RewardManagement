@@ -282,6 +282,28 @@
                                                 @enderror
                                             </div>
                                         </div>
+
+                                        <div class="form-group row mb-4">
+                                            <div class="col-md-6">
+                                                <label for="opening_time" class="label-control">Opening Time <span class="text-danger">*</span></label>
+                                                <input type="time" id="opening_time" value="{{$vendor->opening_time}}" class="form-control @error('opening_time') is-invalid @enderror" name="opening_time" placeholder="Opening Time" maxlength="10" autocomplete="off">
+                                                @error('opening_time')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <span>{{ $message }}</span>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        
+                                            <div class="col-md-6">
+                                                <label for="closing_time" class="label-control">Closing Time <span class="text-danger">*</span></label>
+                                                <input type="time" id="closing_time" value="{{$vendor->closing_time}}" class="form-control @error('closing_time') is-invalid @enderror" name="closing_time" placeholder="Closeing Time" maxlength="10" autocomplete="off">
+                                                @error('closing_time')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <span>{{ $message }}</span>
+                                                    </span>
+                                                @enderror
+                                            </div>
+                                        </div>
                                         
                                         <div class="form-group row">
                                             <div class="col-md-12">
