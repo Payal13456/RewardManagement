@@ -15,27 +15,27 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
 
-                <li class="sidebar-item {{!in_array(Request::segment(1), array('reports-and-feedback','users-list','message-to-users','category','vendor','vendor-list','offers','subscription-plans','push-notification','reedem-request')) ? 'active' : ''}}">
+                <li class="sidebar-item {{!in_array(Request::segment(1), array('reports-and-feedback','users-list','message-to-users','category','vendor','vendor-list','offers','subscription-plans','push-notification','redeem-request','referral')) ? 'active' : ''}}">
                     <a href="{{URL::route('/')}}" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item has-sub {{in_array(Request::segment(1), array('users-list','message-to-users')) ? 'active' : ''}}">
+                <li class="sidebar-item has-sub {{in_array(Request::segment(1), array('users-list','message-to-users','referral')) ? 'active' : ''}}">
                     <a href="#" class='sidebar-link'>
                         <i class="bi bi-person"></i>
                         <span>User</span>
                     </a>
-                    <ul class="submenu " style="{{in_array(Request::segment(1), array('users-list','message-to-users')) ? 'display: block' : 'display:none'}}" >
+                    <ul class="submenu " style="{{in_array(Request::segment(1), array('users-list','message-to-users','referral')) ? 'display: block' : 'display:none'}}" >
                         <li class="submenu-item {{Request::segment(1) === 'users-list' ? 'active' : ''}}">
                             <a href="{{URL::route('users-list')}}">List User</a>
                         </li>
                         <li class="submenu-item {{Request::segment(1) === 'message-to-users' ? 'active' : ''}}">
                             <a href="{{URL::route('message-to-users')}}">Message to User</a>
                         </li>
-                        <li class="submenu-item ">
-                            <a href="component-alert.html">Referal Code</a>
+                        <li class="submenu-item {{Request::segment(1) === 'referral' ? 'active' : ''}}">
+                            <a href="{{URL::route('referral')}}">Referral</a>
                         </li>
 
                     </ul>
@@ -83,10 +83,10 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item {{Request::segment(1) === 'reedem-request' ? 'active' : ''}}">
-                    <a href="{{URL::route('reedem-request')}}" class='sidebar-link'>
+                <li class="sidebar-item {{Request::segment(1) === 'redeem-request' ? 'active' : ''}}">
+                    <a href="{{URL::route('redeem-request')}}" class='sidebar-link'>
                         <i class="bi bi-hexagon-fill"></i>
-                        <span>Reedem Request</span>
+                        <span>Redeem Request</span>
                     </a>
                 </li>
                 

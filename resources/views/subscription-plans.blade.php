@@ -303,5 +303,41 @@
                 }
             });
         });
+
+        $('body').on('click','.activeDeactivePlans', function () {
+            var id = $(this).attr('data-id');
+            var action = $(this).attr('data-action');
+
+            swal({
+                title: "Are you sure, You want to "+action+" this subscription plan ?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url : baseUrl+'/subscription-plans/active-deactive',
+                        type: 'put',
+                        data: {id:id,action:action},
+                        success:function (re) {
+                            if (re.status === true) {
+                                swal({
+                                    title:re.message, 
+                                    icon: "success",
+                                });
+                                $('#subscription-plan-tbl').DataTable().ajax.url(baseUrl+'/subscription-plans/list').load();
+                            }
+                            else {
+                                swal(re.message);
+                            }
+                        }
+                    });
+                }
+            })
+        });
     </script>
 @endpush

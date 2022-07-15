@@ -48,7 +48,7 @@
                                             <th>Type</th>
                                             <th>Message</th>
                                             <th>Users</th>
-                                            <th>Status</th>
+                                            {{-- <th>Status</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody class="text-nowrap">
@@ -75,8 +75,8 @@
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                     { data: 'type', name: 'type', sWidth:'15%' },
                     { data: 'msg', name: 'msg', sClass:'text-wrap', sWidth:'50%'},
-                    { data: 'received_id', name: 'received_id', sWidth:'25%', orderable: false, searchable: false },
-                    { data: 'status', name: 'status', orderable: false, searchable: false },
+                    { data: 'users', name: 'users', sWidth:'25%', sClass:'text-wrap', orderable: false, searchable: false },
+                    // { data: 'status', name: 'status', orderable: false, searchable: false },
                 ]
             });
         });

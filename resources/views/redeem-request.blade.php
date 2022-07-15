@@ -45,13 +45,13 @@
                     <div class="card-body">
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade show active" id="request-list" role="tabpanel" aria-labelledby="request-list-tab">
-                                <table class="table table-hover table-bordered" id="reedem-req-list-tbl">
+                                <table class="table table-hover table-bordered" id="redeem-req-list-tbl">
                                     <thead class="text-nowrap">
                                         <tr>
                                             <th>#</th>
                                             <th>User Name</th>
                                             <th>Amount</th>
-                                            <th>Status</th>
+                                            {{-- <th>Status</th> --}}
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -62,13 +62,13 @@
                             </div>
 
                             <div class="tab-pane fade show" id="approved-list" role="tabpanel" aria-labelledby="approved-list-tab">
-                                <table class="table table-hover table-bordered" id="reedem-appr-list-tbl">
+                                <table class="table table-hover table-bordered" id="redeem-appr-list-tbl">
                                     <thead class="text-nowrap">
                                         <tr>
                                             <th>#</th>
                                             <th>User Name</th>
                                             <th>Amount</th>
-                                            <th>Status</th>
+                                            {{-- <th>Status</th> --}}
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -79,13 +79,13 @@
                             </div>
 
                             <div class="tab-pane fade show" id="rejected-list" role="tabpanel" aria-labelledby="rejected-list-tab">
-                                <table class="table table-hover table-bordered" id="reedem-rej-list-tbl">
+                                <table class="table table-hover table-bordered" id="redeem-rej-list-tbl">
                                     <thead class="text-nowrap">
                                         <tr>
                                             <th>#</th>
                                             <th>User Name</th>
                                             <th>Amount</th>
-                                            <th>Status</th>
+                                            {{-- <th>Status</th> --}}
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -105,41 +105,41 @@
 @push('script')
     <script type="text/javascript">
         $(document).ready(function() {
-            var table = $('#reedem-req-list-tbl').DataTable({
+            var table = $('#redeem-req-list-tbl').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: baseUrl + '/reedem-request/list',
+                ajax: baseUrl + '/redeem-request/list',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', sWidth:'5%' },
                     { data: 'username', name: 'username', sWidth:'25%' },
                     { data: 'amount', name: 'amount', sWidth:'10%', sClass:'text-end' },
-                    { data: 'status', name: 'status', orderable: false, searchable: false, sWidth:'15%' },
+                    // { data: 'status', name: 'status', orderable: false, searchable: false, sWidth:'15%' },
                     { data: 'action', name: 'action', orderable: false, searchable: false, sWidth:'20%' },
                 ]
             });
             
-            var table = $('#reedem-appr-list-tbl').DataTable({
+            var table = $('#redeem-appr-list-tbl').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: baseUrl + '/reedem-approved/list',
+                ajax: baseUrl + '/redeem-approved/list',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', sWidth:'5%' },
                     { data: 'username', name: 'username', sWidth:'25%' },
                     { data: 'amount', name: 'amount', sWidth:'10%', sClass:'text-end' },
-                    { data: 'status', name: 'status', orderable: false, searchable: false, sWidth:'15%' },
+                    // { data: 'status', name: 'status', orderable: false, searchable: false, sWidth:'15%' },
                     { data: 'action', name: 'action', orderable: false, searchable: false, sWidth:'20%' },
                 ]
             });
             
-            var table = $('#reedem-rej-list-tbl').DataTable({
+            var table = $('#redeem-rej-list-tbl').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: baseUrl + '/reedem-rejected/list',
+                ajax: baseUrl + '/redeem-rejected/list',
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', sWidth:'5%' },
                     { data: 'username', name: 'username', sWidth:'25%' },
                     { data: 'amount', name: 'amount', sWidth:'10%', sClass:'text-end' },
-                    { data: 'status', name: 'status', orderable: false, searchable: false, sWidth:'15%' },
+                    // { data: 'status', name: 'status', orderable: false, searchable: false, sWidth:'15%' },
                     { data: 'action', name: 'action', orderable: false, searchable: false, sWidth:'20%' },
                 ]
             });
@@ -160,7 +160,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url : baseUrl+'/reedem-request/action',
+                        url : baseUrl+'/redeem-request/action',
                         type: 'put',
                         data: {action:action, actionId:actionId},
                         success:function (re) {
@@ -169,9 +169,9 @@
                                     title: re.message,
                                     icon: "success",
                                 });
-                                $('#reedem-req-list-tbl').DataTable().ajax.url(baseUrl+'/reedem-request/list').load();
-                                $('#reedem-appr-list-tbl').DataTable().ajax.url(baseUrl+'/reedem-approved/list').load();
-                                $('#reedem-rej-list-tbl').DataTable().ajax.url(baseUrl+'/reedem-rejected/list').load();
+                                $('#redeem-req-list-tbl').DataTable().ajax.url(baseUrl+'/redeem-request/list').load();
+                                $('#redeem-appr-list-tbl').DataTable().ajax.url(baseUrl+'/redeem-approved/list').load();
+                                $('#redeem-rej-list-tbl').DataTable().ajax.url(baseUrl+'/redeem-rejected/list').load();
                             }
                             else {
                                 swal(re.message);

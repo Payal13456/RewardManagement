@@ -44,7 +44,7 @@
                                     <th>Passport</th>
                                     <th>Address</th>
                                     <th>Referal Code</th>
-                                    <th>Status</th>
+                                    {{-- <th>Status</th> --}}
                                     <th>Block Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -111,7 +111,7 @@
                     { data: 'passport_no', name: 'passport_no' },
                     { data: 'address', name: 'address' },
                     { data: 'referal_code', name: 'referal_code' },
-                    { data: 'status', name: 'status', orderable: false, searchable: false },
+                    // { data: 'status', name: 'status', orderable: false, searchable: false },
                     { data: 'blockStatus', name: 'blockStatus', orderable: false, searchable: false },
                     { data: 'process', name: 'process', orderable: false, searchable: false },
                 ]

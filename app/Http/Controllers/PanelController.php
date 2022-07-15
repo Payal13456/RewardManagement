@@ -19,6 +19,7 @@ use App\Models\ShopMobileNo;
 use App\Models\ShopCoverImage;
 use App\Models\PlanCategory;
 use App\Models\Feedback;
+use App\Models\ReferralAmt;
 use DataTables;
 use Illuminate\Validation\Validator;
 
@@ -68,13 +69,13 @@ class PanelController extends Controller
                     $dob = date('d-m-Y', strtotime($row->dob));
                     return $dob;
                 })
-                ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success" ><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
-                    if($row->status == 0) {
-                        $status = '<span class="badge bg-danger" ><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
-                    }
-                    return $status;
-                })
+                // ->addColumn('status', function($row){
+                //     $status = '<span class="badge bg-success" ><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                //     if($row->status == 0) {
+                //         $status = '<span class="badge bg-danger" ><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
+                //     }
+                //     return $status;
+                // })
                 ->addColumn('blockStatus', function($row){
                     if($row->is_blocked == 0) {
                         $action = '<span class="badge bg-success" data-action="unblock" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock User">
@@ -103,12 +104,12 @@ class PanelController extends Controller
                             Unblock
                         </span>';
                     }
-                    if($row->status == 2) {
-                        $action .= '&nbsp;&nbsp; <span class="activeDeactiveUser cursor-point badge bg-danger" data-action="deactive" data-id="'.$row->id.'"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
-                    } 
-                    if($row->status == 0) {
-                        $action .= '&nbsp;&nbsp; <span class="activeDeactiveUser cursor-point badge bg-success" data-action="active" data-id="'.$row->id.'"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
-                    }
+                    // if($row->status == 2) {
+                    //     $action .= '&nbsp;&nbsp; <span class="activeDeactiveUser cursor-point badge bg-danger" data-action="deactive" data-id="'.$row->id.'"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
+                    // } 
+                    // if($row->status == 0) {
+                    //     $action .= '&nbsp;&nbsp; <span class="activeDeactiveUser cursor-point badge bg-success" data-action="active" data-id="'.$row->id.'"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    // }
                     $action .= '&nbsp;&nbsp;
                     <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
                     <i class="fa fa-street-view">&nbsp;&nbsp;</i>
@@ -467,7 +468,7 @@ class PanelController extends Controller
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
@@ -690,7 +691,7 @@ class PanelController extends Controller
                     if($sub->is_expired == 0) { $sub->is_expired = '<span class="badge bg-success">Not Expired</span>'; }
                     else if($sub->is_expired == 1) { $sub->is_expired = '<span class="badge bg-danger">Expired</span>'; }
                     
-                    if($sub->status == 0) { $sub->status = '<span class="badge bg-danger">Inactive</span>'; }
+                    if($sub->status == 0) { $sub->status = '<span class="badge bg-danger">Deactive</span>'; }
                     else if($sub->status == 1) { $sub->status = '<span class="badge bg-success">Active</span>'; }
                 }
             }
@@ -709,7 +710,7 @@ class PanelController extends Controller
             if(count($referral) > 0) {
                 foreach($referral as $ref) {
                     $ref->ref_date = date('d M, Y', strtotime($ref->ref_date));
-                    if($ref->status == 0) { $ref->status = '<span class="badge bg-danger">Inactive</span>'; }
+                    if($ref->status == 0) { $ref->status = '<span class="badge bg-danger">Deactive</span>'; }
                     else if($ref->status == 1) { $ref->status = '<span class="badge bg-success">Active</span>'; }
                 }
             }
@@ -723,7 +724,7 @@ class PanelController extends Controller
 
     public function messageToUsersList (Request $request)
     {
-        $userList = User::where('is_blocked',0)->where('role',2)->whereIn('status', ['1', '2'])->orderBy('name','ASC')->get();
+        $userList = User::where('is_blocked',0)->where('role',2)->orderBy('name','ASC')->get();
         return view('message-to-user')->with('userList',$userList);
     }
 
@@ -773,13 +774,18 @@ class PanelController extends Controller
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="remove-plans badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="edit-plans badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
+                    if($row->status == 0) {
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="active" data-id="'.$row->id.'" class="activeDeactivePlans badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</a>';
+                    } else if($row->status == 1) {
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactive" data-id="'.$row->id.'" class="activeDeactivePlans badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</a>';
+                    }
                     return $action;
                 })
                 ->rawColumns(['status','action'])
@@ -893,6 +899,21 @@ class PanelController extends Controller
             }
         }
         return (['status' => false, 'message' => 'Failed to delete Subscription Plan.']);
+    }
+
+    public function activeDeactiveSubscriptionPlan (Request $request)
+    {
+        $action = Plans::where('id',$request->id)->first();
+        if($action) {
+            if($request->action === 'active') {
+                Plans::where('id',$request->id)->update(['status' => 1]);
+            }
+            if($request->action === 'deactive') {
+                Plans::where('id',$request->id)->update(['status' => 0]);
+            }
+            return (['status' => true, 'message' => 'Subscription Plan '.$request->action.'d successfully.']);
+        }
+        return (['status' => false, 'message' => 'Failed to Subscription Plan '.$request->action.'d.']);
     }
 
     public function createNewOffers (Request $request) 
@@ -1017,7 +1038,7 @@ class PanelController extends Controller
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
@@ -1043,7 +1064,7 @@ class PanelController extends Controller
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
@@ -1068,7 +1089,7 @@ class PanelController extends Controller
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
@@ -1148,7 +1169,7 @@ class PanelController extends Controller
                 ->addColumn('status', function($row){
                     $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Inactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
                     }
                     return $status;
                 })
@@ -1157,10 +1178,17 @@ class PanelController extends Controller
                     return $msg;
                 })
                 ->addColumn('users', function($row){
-                    // $receiver = User::select('name')->whereIn('id',[$row->received_id])->get();
-
-                    // $users = implode(',',$receiver->name);
-                    // return $users;
+                    $usernameArr = [];
+                    $receiver = explode(',',$row->received_id);
+                    
+                    if(count($receiver) > 0) {
+                        foreach($receiver as $rec) {
+                            $username = User::getUserName($rec);
+                            array_push($usernameArr, $username);
+                        }
+                    }
+                    $users = implode(', ',$usernameArr);
+                    return $users;
                 })
                 ->rawColumns(['status','users'])
                 ->make(true);
@@ -1181,6 +1209,98 @@ class PanelController extends Controller
                 ->rawColumns(['reportDate'])
                 ->make(true);
         }
+    }
+
+
+
+    public function createNewReferralAmount (Request $request)
+    {
+        $request->validate([
+            'referral_amt' =>  'required',
+        ],[
+            'referral_amt.required'    =>  'Referral Amount should not be blank.',
+        ]);
+        try {
+            if(ReferralAmt::where('status',1)->count() > 0) {
+                ReferralAmt::where('status',1)->update(['status' => 0]);
+                ReferralAmt::insert([
+                    'referral_amt'  =>  $request->referral_amt,
+                    'status'        =>  1,
+                    'created_at'    =>  date('Y-m-d H:i:s'),
+                    'updated_at'    =>  date('Y-m-d H:i:s'),
+                ]);
+                return back()->with('success',"Referral Amount added successfully.");
+            }
+            else {
+                if(ReferralAmt::insert([
+                    'referral_amt'  =>  $request->referral_amt,
+                    'status'        =>  1,
+                    'created_at'    =>  date('Y-m-d H:i:s'),
+                    'updated_at'    =>  date('Y-m-d H:i:s'),
+                ])) 
+                    return back()->with('success',"Referral Amount added successfully.");
+
+                else 
+                    return back()->with('error',"Failed to add referral amount, Try again.");
+            }
+        } catch (\Exception $e) {
+            return back()->with('error',$e->getMessage());
+        }
+    }
+
+    public function getAllReferralAmountList (Request $request)
+    {
+        if ($request->ajax()) {
+            $data = ReferralAmt::latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('status', function($row){
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    if($row->status == 0) {
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('action', function($row){
+                    $action = '<a href="javascript:void(0)" class="removeReferral badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i>Delete</a>';
+                    
+                    if($row->status == 0) {
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="active" data-id="'.$row->id.'" class="activeDeactiveReferral badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</a>';
+                    } /*else if($row->status == 1) {
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactive" data-id="'.$row->id.'" class="activeDeactiveReferral badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</a>';
+                    }*/
+                    return $action;
+                })
+                ->rawColumns(['status','action'])
+                ->make(true);
+        }
+    }
+
+    public function deleteSelectedReferralAmount (Request $request)
+    {
+        $referral = ReferralAmt::find($request->id);
+        if(($referral) && ($referral->status == 1)) {
+            return (['status' => false, 'message' => 'Sorry, Before delete this Referral Amount, You need to active other one.']);
+        }
+        else if(($referral) && ($referral->status == 0)) {
+            $referral->delete();
+            return (['status' => true, 'message' => 'Referral Amount deleted successfully.']);
+        }
+        else {
+            return (['status' => false, 'message' => 'Failed to delete category.']);
+        }
+    }
+
+    public function activeDeactiveSelectedReferralAmount (Request $request)
+    {
+        if(ReferralAmt::where('id','!=',$request->id)->where('status',1)->count() > 0) 
+        {
+            ReferralAmt::where('status',1)->update(['status' => 0]);
+            ReferralAmt::where('id',$request->id)->update(['status' => 1]);
+
+            return (['status' => true, 'message' => 'Referral Amount '.$request->action.'d successfully.']);
+        }
+        return (['status' => false, 'message' => 'Failed to Category '.$request->action.'d.']);
     }
 
 }
