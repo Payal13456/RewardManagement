@@ -97,7 +97,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-12 col-xl-4">
                         <div class="card">
                             <div class="card-header">
@@ -210,9 +210,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
-            <div class="col-12 col-lg-3">
+            {{-- <div class="col-12 col-lg-3">
                 <div class="card">
                     <div class="card-body py-4 px-5">
                         <div class="d-flex align-items-center">
@@ -272,7 +272,7 @@
                         <div id="chart-visitors-profile"></div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </section>
     </div>
     

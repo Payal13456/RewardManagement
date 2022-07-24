@@ -28,7 +28,7 @@ class PanelController extends Controller
     public function getDashboard ()
     {
         $users = User::where('role',2)->count();
-        $vendor = User::where('role',3)->count();
+        $vendor = Vendors::where('status',1)->count();
         $blockedUsers = User::where('role',2)->where('is_blocked',1)->count();
 
         $countryArr = [];
@@ -48,6 +48,7 @@ class PanelController extends Controller
         return view ('dashboard', compact('users','vendor','blockedUsers','countryArr','userCountArr'));
     }
 
+// Get all users list function
     public function getAllUsersList (Request $request)
     {
         if ($request->ajax()) {
@@ -62,20 +63,13 @@ class PanelController extends Controller
                     return $location;
                 })
                 ->addColumn('mobile_no', function($row){
-                    $mobileNo = '+'.$row->country_code.'-'.$row->mobile_no;
+                    $mobileNo = $row->country_code.' '.$row->mobile_no;
                     return $mobileNo;
                 })
                 ->addColumn('dob', function($row){
                     $dob = date('d-m-Y', strtotime($row->dob));
                     return $dob;
                 })
-                // ->addColumn('status', function($row){
-                //     $status = '<span class="badge bg-success" ><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
-                //     if($row->status == 0) {
-                //         $status = '<span class="badge bg-danger" ><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
-                //     }
-                //     return $status;
-                // })
                 ->addColumn('blockStatus', function($row){
                     if($row->is_blocked == 0) {
                         $action = '<span class="badge bg-success" data-action="unblock" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="Unblock User">
@@ -104,12 +98,6 @@ class PanelController extends Controller
                             Unblock
                         </span>';
                     }
-                    // if($row->status == 2) {
-                    //     $action .= '&nbsp;&nbsp; <span class="activeDeactiveUser cursor-point badge bg-danger" data-action="deactive" data-id="'.$row->id.'"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
-                    // } 
-                    // if($row->status == 0) {
-                    //     $action .= '&nbsp;&nbsp; <span class="activeDeactiveUser cursor-point badge bg-success" data-action="active" data-id="'.$row->id.'"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
-                    // }
                     $action .= '&nbsp;&nbsp;
                     <span class="badge bg-warning viewDetailsUser cursor-point" data-action="view" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
                     <i class="fa fa-street-view">&nbsp;&nbsp;</i>
@@ -122,6 +110,7 @@ class PanelController extends Controller
         }
     }
 
+// User block/Unblock function
     public function userBlockUnblock (Request $request)
     {
         $action = User::where('id',$request->id)->where('role',2)->first();        
@@ -474,7 +463,7 @@ class PanelController extends Controller
                 })
                 ->addColumn('mobileNo', function($row){
                     $mobileNo = '<center>--</center>';
-                    if(!empty($row->mobile_no)) { $mobileNo = '+'.$row->phone_code.'-'.$row->mobile_no; }
+                    if(!empty($row->mobile_no)) { $mobileNo = '+'.$row->phone_code.' '.$row->mobile_no; }
                     return $mobileNo;
                 })
                 ->addColumn('website', function($row){
@@ -490,9 +479,15 @@ class PanelController extends Controller
                     return $location;
                 })
                 ->addColumn('action', function($row){
-                    $action = '<a href="javascript:void(0)" class="actionRequestVendor badge bg-warning" data-action="approve" data-id="'.$row->id.'" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approve</a> &nbsp;&nbsp;
-                    <a href="javascript:void(0)" class="actionRequestVendor badge bg-danger" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Reject</a>
-                    <a href="'.url('/vendor/update').'/'.encrypt($row->id).'" class="badge bg-primary" data-action="edit" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i>Edit</a>';
+                    $action = '<a href="javascript:void(0)" class="actionRequestVendor badge bg-danger" data-action="delete" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i>Delete</a> &nbsp;&nbsp;
+                    <a href="'.url('/vendor/update').'/'.encrypt($row->id).'" class="badge bg-success" ><i class="fa fa-edit">&nbsp;&nbsp;</i>Edit</a> &nbsp;&nbsp
+                    <a href="javascript:void(0)" class="viewDetailsVendor badge bg-dark" data-action="view" data-id="'.$row->id.'" ><i class="fa fa-street-view">&nbsp;&nbsp;</i>View</a>';
+                    
+                    if($row->status == 0) {
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="active" data-id="'.$row->id.'" class="actionRequestVendor badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</a>';
+                    } else if($row->status == 1) {
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactive" data-id="'.$row->id.'" class="actionRequestVendor badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</a>';
+                    }
                     return $action;
                 })
                 ->rawColumns(['website','location','status','mobileNo','action'])
@@ -511,6 +506,72 @@ class PanelController extends Controller
         $emails = ShopEmail::select('id','vendor_id','shop_email')->where('vendor_id',decrypt($id))->get();
 
         return view ('vendor-update',compact('cate','countryCode','vendor','coverImg','landLine','mobileNo','emails'));
+    }
+
+    public function actionRequestVendorDetails (Request $request)
+    {
+        if($request->action === 'delete') {
+            $vendor = Vendors::find($request->id);
+            $coverImg = ShopCoverImage::where('vendor_id', $request->id);
+            $landLine = ShopLandline::where('vendor_id', $request->id);
+            $mobileNo = ShopMobileNo::where('vendor_id', $request->id);
+            $emails = ShopEmail::where('vendor_id', $request->id);
+            if($vendor) {
+                $vendor->delete();
+                $coverImg->delete();
+                $landLine->delete();
+                $mobileNo->delete();
+                $emails->delete();
+                return (['status' => true, 'message' => 'Vendor & details deleted successfully.']);
+            }
+            else {
+                return (['status' => false, 'message' => 'Failed to delete Vendor, Try again.']);
+            }
+        }
+        if($request->action === 'active') {
+            $vendor = Vendors::find($request->id);
+            if($vendor) {
+                $vendor = Vendors::where('id',$request->id)->update(['status' => 1]);
+                $coverImg = ShopCoverImage::where('vendor_id', $request->id)->update(['status' => 1]);
+                $landLine = ShopLandline::where('vendor_id', $request->id)->update(['status' => 1]);
+                $mobileNo = ShopMobileNo::where('vendor_id', $request->id)->update(['status' => 1]);
+                $emails = ShopEmail::where('vendor_id', $request->id)->update(['status' => 1]);
+                return (['status' => true, 'message' => 'Vendor & details Activated successfully.']);
+            }
+            else {
+                return (['status' => false, 'message' => 'Failed to active Vendor, Try again.']);
+            }
+        }
+        if($request->action === 'deactive') {
+            $vendor = Vendors::find($request->id);
+            if($vendor) {
+                $vendor = Vendors::where('id',$request->id)->update(['status' => 0]);
+                $coverImg = ShopCoverImage::where('vendor_id', $request->id)->update(['status' => 0]);
+                $landLine = ShopLandline::where('vendor_id', $request->id)->update(['status' => 0]);
+                $mobileNo = ShopMobileNo::where('vendor_id', $request->id)->update(['status' => 0]);
+                $emails = ShopEmail::where('vendor_id', $request->id)->update(['status' => 0]);
+                return (['status' => true, 'message' => 'Vendor & details Deactivated successfully.']);
+            }
+            else {
+                return (['status' => false, 'message' => 'Failed to deactive Vendor, Try again.']);
+            }
+        }
+    }
+
+    public function getVendorDetails (Request $request)
+    {
+        $vendor = Vendors::find($request->vendorId);
+        if($vendor) {
+            $coverImg = ShopCoverImage::where('vendor_id', $request->vendorId)->get();
+            $landLine = ShopLandline::where('vendor_id', $request->vendorId)->get();
+            $mobileNo = ShopMobileNo::where('vendor_id', $request->vendorId)->get();
+            $emails = ShopEmail::where('vendor_id', $request->vendorId)->get();
+
+            return (['status' => true, 'vendor'=>$vendor, 'coverImg'=>$coverImg, 'landLine'=>$landLine, 'mobileNo'=>$mobileNo, 'emails'=>$emails]);
+        }
+        else {
+            return (['status' => false, 'message' => 'Vendor not found.']);
+        }
     }
 
     public function removeVendorCoverImage (Request $request)
@@ -879,6 +940,7 @@ class PanelController extends Controller
     {
         $plan = Plans::find($request->id);
         if($plan) {
+            $plan->category = PlanCategory::select('category_id')->where('plan_id',$request->id)->get();
             return (['status' => true, 'message' => 'Record found.', 'data'=>$plan]);
         }
         return (['status' => false, 'message' => 'No Record found.', 'data'=>[] ]);

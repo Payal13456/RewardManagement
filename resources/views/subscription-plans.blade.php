@@ -100,7 +100,7 @@
                                     <div class="card">
                                         <div class="card-content">
                                             <div class="card-body">
-                                                <form class="form form-horizontal" action="{{URL::route('subscription-plans-submit')}}" method="POST">
+                                                <form class="form form-horizontal" action="{{URL::route('subscription-plans-submit')}}" method="POST" id="subscription-plan-form">
                                                     @csrf
                                                     <div class="form-body">
                                                         <div class="row">
@@ -227,6 +227,11 @@
             });
         });
 
+        $(document).on('click','#plan-subscription-list-tab', function () {
+            $('#plan-subsrcription-add-tab').text('Add Plan/Subscription');
+            $('#subscription-plan-form').trigger('reset');
+        });
+
         $(document).on('keyup','.calsTotal',function () {
             var totalAmt = 0;
             var planAmt = $('#plan_amount').val();
@@ -287,6 +292,7 @@
                 data: {id:id},
                 success:function (re) {
                     if (re.status === true) {
+                        console.log(re.data);
                         $('#pills-tab').find('#plan-subscription-list-tab').removeClass('active');
                         $('#pills-tab').find('#plan-subsrcription-add-tab').addClass('active');
 
@@ -298,7 +304,24 @@
                         $('#plan_validity').val(re.data.validity);
                         $('#plan_amount').val(re.data.amount);
                         $('#plan_tax').val(re.data.tax);
-                        $('#plan_total').val(re.data.total);
+                        $('#plan_total').val(re.data.total).attr('readonly','readonly');
+                        $('#plan-subsrcription-add-tab').text('Edit Plan/Subscription');
+
+                        // var cateArr = @json($category);
+                        // if(cateArr.length > 0) {
+                        //     var cateOption = '';
+                        //     var i = 0;
+                        //     var selected = '';
+                        //     if($.inArray(re.data.category, value) !== -1) {
+                        //         selected = "selected";
+                        //     }
+                        //     $.each(cateArr, function (key, value) {
+                        //         cateOption += '<option '+selected+' value="'+value.id+'">'+value.name+'</option>';
+                        //         i++
+                        //     });
+                        //     $('#category_id').html('').html(cateOption);
+                        // }
+
                     }
                 }
             });

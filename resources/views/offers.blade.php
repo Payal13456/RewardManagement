@@ -68,7 +68,7 @@
                                     <div class="card">
                                         <div class="card-content">
                                             <div class="card-body">
-                                                <form class="form form-horizontal" action="{{URL::route('offers-submit')}}" method="POST">
+                                                <form class="form form-horizontal" id="offers-form" action="{{URL::route('offers-submit')}}" method="POST">
                                                     @csrf
                                                     <div class="form-body">
                                                         <div class="row">
@@ -166,6 +166,13 @@
                 ]
             });
         });
+
+        $(document).on('click','#offers-list-tab', function () {
+            $('#offers-add-tab').text('Add Offers');
+            $('#offers-form').trigger('reset');
+            $('#vendor_id').val('').change();
+            CKEDITOR.instances['offer_description'].setData('');
+        })
 
         CKEDITOR.replace( 'offer_description',{
             toolbar: [
@@ -271,6 +278,8 @@
                         $('#start_date').val(re.data.start_date).change();
                         $('#end_date').val(re.data.end_date).change();
                         CKEDITOR.instances['offer_description'].setData(re.data.offer_desc);
+
+                        $('#offers-add-tab').text('Edit Offers');
                     }
                 }
             });

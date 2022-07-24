@@ -67,7 +67,7 @@
                                     <div class="card">
                                         <div class="card-content">
                                             <div class="card-body">
-                                                <form class="form form-horizontal" action="{{URL::route('category-submit')}}" method="POST" enctype="multipart/form-data">
+                                                <form class="form form-horizontal" id="category-form" action="{{URL::route('category-submit')}}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="form-body">
                                                         <div class="row">
@@ -92,7 +92,12 @@
                                                                     </span>
                                                                 @enderror
                                                             </div>
-                    
+                                                            <div class="offset-md-4 input-group image-area d-none" id="categoryImgDiv">
+                                                                {{-- <span class="remove-image remove-server-coverImg" data-id="'+re.data.id+'">
+                                                                    <i class="fa fa-times"></i>
+                                                                </span> --}}
+                                                                <img id="categoryImgId">
+                                                            </div>
                                                             <div class="col-sm-12 d-flex justify-content-end">
                                                                 <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>
                                                             </div>
@@ -138,6 +143,12 @@
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });
+    });
+
+    $(document).on('click','#category-list-tab', function () {
+        $('#category-add-tab').text('Add Category');
+        $('#category-form').trigger('reset');
+        $('#categoryImgDiv').addClass('d-none');
     });
 
     $('body').on('click','.remove-category', function () {
@@ -222,7 +233,7 @@
             success:function (re) {
                 if (re.status === true) {
                     $('#pills-tab').find('#category-list-tab').removeClass('active');
-                    $('#pills-tab').find('#category-add-tab').addClass('active');
+                    $('#pills-tab').find('#category-add-tab').addClass('active').text('Edit Category');
 
                     $('#pills-tabContent').find('.tab-pane').removeClass('show active');
                     $('#pills-tabContent').find('#category-add').addClass('show active');
@@ -230,7 +241,8 @@
                     $('#editCategoryId').val(re.data.id);
                     $('#editCategoryImg').val(re.data.image);
                     $('#category_name').val(re.data.name);
-                    $('#category_img').val(re.data.image);
+                    $('#categoryImgDiv').removeClass('d-none');
+                    $('#categoryImgId').attr('src', baseUrl+'/public/uploads/category/'+re.data.image).attr('alt', re.data.image);
                 }
             }
         });

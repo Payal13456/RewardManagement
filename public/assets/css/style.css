@@ -151,9 +151,9 @@
 .ml-1 {
     margin-left: 0.25rem!important;
 }
-a:hover {
+/* a:hover {
     color: #fff;
-}
+} */
 .select2-full {
     width:100% !important;
 }

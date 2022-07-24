@@ -43,6 +43,8 @@ Route::group(['Prefix' => '/'], function () {
         Route::get('/vendor/update/{id}', [App\Http\Controllers\PanelController::class, 'editSelectedVendorDetails'])->name('vendor-create-update');
         Route::delete('/vendor/cover-img/delete/', [App\Http\Controllers\PanelController::class, 'removeVendorCoverImage'])->name('vendor-cover-delete');
         Route::post('/vendor/update', [App\Http\Controllers\PanelController::class, 'updateSelectedVendorDetails'])->name('vendor-edit-update');
+        Route::get('/vendor/action', [App\Http\Controllers\PanelController::class, 'actionRequestVendorDetails'])->name('vendor-action');
+        Route::get('/vendor/details', [App\Http\Controllers\PanelController::class, 'getVendorDetails'])->name('vendor-details');
 
         Route::get('/message-to-users',[App\Http\Controllers\PanelController::class, 'messageToUsersList'])->name('message-to-users');
         Route::post('/message-to-users/submit',[App\Http\Controllers\PanelController::class, 'messageToUsersSubmit'])->name('message-to-user-submit');

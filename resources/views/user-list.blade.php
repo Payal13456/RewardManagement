@@ -205,18 +205,18 @@
                 success: function(re) {
                     if (re.status === true) {
                         $('#viewDetailsModalTitle').text('').text('User : '+re.userDt.name);
-                        var location = '--';
-                        var emiratesId = '--';
-                        var passportNo = '--';
-                        var mobileNo = '--';
-                        var emailAddress = '--';
-                        var dateOfBirth = '--';
+                        var location = '';
+                        var emiratesId = '';
+                        var passportNo = '';
+                        var mobileNo = '';
+                        var emailAddress = '';
+                        var dateOfBirth = '';
                         if(re.userDt.location !== null) { location = re.userDt.location; }
                         if(re.userDt.emirates_id !== null) { emiratesId = re.userDt.emirates_id; }
                         if(re.userDt.passport_no !== null) { passportNo = re.userDt.passport_no; }
                         if(re.userDt.email !== null) { emailAddress = re.userDt.email; }
                         if(re.userDt.dob !== null) { dateOfBirth = re.userDt.dob; }
-                        if(re.userDt.mobile_no !== null) { mobileNo = '+'+re.userDt.country_code+'-'+re.userDt.mobile_no; }
+                        if(re.userDt.mobile_no !== null) { mobileNo = re.userDt.country_code+' '+re.userDt.mobile_no; }
                         var userProfile = '<div class="card card-primary card-outline">'+
                             '<div class="card-body box-profile">'+
                                 '<div class="text-center">'+
@@ -257,7 +257,7 @@
                                         '<span class="nav-link" id="referral-history-tab" data-bs-toggle="pill" data-bs-target="#referral-history" role="tab" aria-controls="referral-history" aria-selected="false">Referral History</span>'+
                                     '</li>'+
                                     // '<li class="nav-item cursor-point" role="presentation">'+
-                                    //     '<span class="nav-link" id="referral-history-tab" data-bs-toggle="pill" data-bs-target="#referral-history" role="tab" aria-controls="referral-history" aria-selected="false">Wallet</span>'+
+                                    //     '<span class="nav-link" id="other-information-tab" data-bs-toggle="pill" data-bs-target="#other-information" role="tab" aria-controls="other-information" aria-selected="false">Other Information</span>'+
                                     // '</li>'+
                                 '</ul>'+
                             '</div>'+
@@ -280,6 +280,7 @@
                                             '</tbody>'+
                                         '</table>'+
                                     '</div>'+
+
                                     '<div class="tab-pane fade" id="redemption-history" role="tabpanel" aria-labelledby="redemption-history-tab">'+
                                         '<table class="table table-bordered table-striped" id="redemption-history-tbl">'+
                                             '<thead>'+
@@ -294,6 +295,7 @@
                                             '</tbody>'+
                                         '</table>'+
                                     '</div>'+
+
                                     '<div class="tab-pane fade" id="referral-history" role="tabpanel" aria-labelledby="referral-history-tab">'+
                                         '<table class="table table-bordered table-striped" id="referral-history-tbl">'+
                                             '<thead>'+
@@ -309,6 +311,17 @@
                                             '</tbody>'+
                                         '</table>'+
                                     '</div>'+
+
+                                    // '<div class="tab-pane fade" id="other-information" role="tabpanel" aria-labelledby="other-information-tab">'+
+                                    //     '<div class="card">'+
+                                    //         '<div class="card-header p-2">'+
+                                    //             '<div class="card-body">'+
+
+                                    //             '</div>'+
+                                    //         '</div>'+
+                                    //     '</div>'+
+                                    // '</div>'+
+
                                 '</div>'+
                             '</div>'+
                         '</div>';

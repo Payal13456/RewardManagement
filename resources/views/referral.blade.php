@@ -50,7 +50,7 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Amount</th>
+                                            <th>Amount (in AED)</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -71,7 +71,7 @@
                                                     <div class="form-body">
                                                         <div class="row">
                                                             <input type="hidden" name="editReferral" id="editReferral">
-                                                            <label for="referral_amt" class="label-control col-md-4">Referral Amount <span class="text-danger">*</span></label>
+                                                            <label for="referral_amt" class="label-control col-md-4">Referral Amount (in AED) <span class="text-danger">*</span></label>
                                                             <div class="col-md-8 form-group">
                                                                 <input type="text" id="referral_amt" class="form-control @error('referral_amt') is-invalid @enderror" name="referral_amt" placeholder="Referral Amount" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                                 @error('referral_amt')
