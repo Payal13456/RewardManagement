@@ -222,7 +222,7 @@
                                 '<div class="text-center">'+
                                     '<img class="profile-user-img img-fluid img-circle" src="{{asset('public/assets/images/faces/2.jpg')}}" alt="User profile picture">'+
                                 '</div>'+
-                                '<h3 class="profile-username text-center">'+re.userDt.name+'</h3>'+
+                                '<h3 class="profile-username text-center">'+re.userDt.name+' '+re.userDt.last_name+'</h3>'+
                                 '<p class="text-muted text-center">'+location+'</p>'+
                                 '<ul class="list-group list-group-unbordered mb-3">'+
                                     '<li class="list-group-item">'+
@@ -251,14 +251,11 @@
                                         '<span class="nav-link active" id="payment-history-tab" data-bs-toggle="pill" data-bs-target="#payment-history" role="tab" aria-controls="payment-history" aria-selected="true">Payment History</span>'+
                                     '</li>'+
                                     '<li class="nav-item cursor-point" role="presentation">'+
-                                        '<span class="nav-link" id="redemption-history-tab" data-bs-toggle="pill" data-bs-target="#redemption-history" role="tab" aria-controls="redemption-history" aria-selected="false">Redemption History</span>'+
+                                        '<span class="nav-link" id="redemption-history-tab" data-bs-toggle="pill" data-bs-target="#redemption-history" role="tab" aria-controls="redemption-history" aria-selected="false">Redeemption History</span>'+
                                     '</li>'+
                                     '<li class="nav-item cursor-point" role="presentation">'+
                                         '<span class="nav-link" id="referral-history-tab" data-bs-toggle="pill" data-bs-target="#referral-history" role="tab" aria-controls="referral-history" aria-selected="false">Referral History</span>'+
                                     '</li>'+
-                                    // '<li class="nav-item cursor-point" role="presentation">'+
-                                    //     '<span class="nav-link" id="other-information-tab" data-bs-toggle="pill" data-bs-target="#other-information" role="tab" aria-controls="other-information" aria-selected="false">Other Information</span>'+
-                                    // '</li>'+
                                 '</ul>'+
                             '</div>'+
                             '<div class="card-body">'+
@@ -287,7 +284,7 @@
                                                 '<tr>'+
                                                     '<th>#</th>'+
                                                     '<th>Request Date</th>'+
-                                                    '<th>Request Amount</th>'+
+                                                    '<th>Request Amount (in AED)</th>'+
                                                     '<th>Approved Status</th>'+
                                                 '</tr>'+
                                             '</thead>'+
@@ -303,7 +300,7 @@
                                                     '<th>#</th>'+
                                                     '<th>Date</th>'+
                                                     '<th>Referral Code</th>'+
-                                                    '<th>Amount</th>'+
+                                                    '<th>Amount (in AED)</th>'+
                                                     '<th>Status</th>'+
                                                 '</tr>'+
                                             '</thead>'+
@@ -311,16 +308,6 @@
                                             '</tbody>'+
                                         '</table>'+
                                     '</div>'+
-
-                                    // '<div class="tab-pane fade" id="other-information" role="tabpanel" aria-labelledby="other-information-tab">'+
-                                    //     '<div class="card">'+
-                                    //         '<div class="card-header p-2">'+
-                                    //             '<div class="card-body">'+
-
-                                    //             '</div>'+
-                                    //         '</div>'+
-                                    //     '</div>'+
-                                    // '</div>'+
 
                                 '</div>'+
                             '</div>'+
@@ -350,7 +337,7 @@
                                 tableRTr += '<tr>'+
                                     '<td>'+(key+1)+'</td>'+
                                     '<td>'+value.req_date+'</td>'+
-                                    '<td>'+value.amount+'</td>'+
+                                    '<td>'+value.amount+' AED</td>'+
                                     '<td>'+value.is_approved+'</td>'+
                                 '</tr>';
                             });
@@ -364,7 +351,7 @@
                                     '<td>'+(key+1)+'</td>'+
                                     '<td>'+value.ref_date+'</td>'+
                                     '<td>'+value.referal_code+'</td>'+
-                                    '<td>'+value.amount+'</td>'+
+                                    '<td>'+value.amount+' AED</td>'+
                                     '<td>'+value.status+'</td>'+
                                 '</tr>';
                             });

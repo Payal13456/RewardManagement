@@ -82,9 +82,9 @@
                                             <th>#</th>
                                             <th>Plan Name</th>
                                             <th>Plan Validity</th>
-                                            <th>Plan Amount</th>
+                                            <th>Plan Amount (in AED)</th>
                                             <th>Plan Tax</th>
-                                            <th>Total Plan Amount</th>
+                                            <th>Total Plan Amount (in AED)</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>

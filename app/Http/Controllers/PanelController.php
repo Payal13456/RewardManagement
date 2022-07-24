@@ -62,6 +62,10 @@ class PanelController extends Controller
                     }
                     return $location;
                 })
+                ->addColumn('name', function($row){
+                    $name = $row->name.' '.$row->last_name;
+                    return $name;
+                })
                 ->addColumn('mobile_no', function($row){
                     $mobileNo = $row->country_code.' '.$row->mobile_no;
                     return $mobileNo;
@@ -105,7 +109,7 @@ class PanelController extends Controller
                     </span>';
                     return $action;
                 })
-                ->rawColumns(['location','dob','mobile_no','status','process','blockStatus'])
+                ->rawColumns(['location','dob','mobile_no','status','process','blockStatus','name'])
                 ->make(true);
         }
     }
@@ -839,6 +843,14 @@ class PanelController extends Controller
                     }
                     return $status;
                 })
+                ->addColumn('amount', function($row){
+                    $amount = $row->amount. ' AED';
+                    return $amount;
+                })
+                ->addColumn('total', function($row){
+                    $total = $row->total. ' AED';
+                    return $total;
+                })
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="remove-plans badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="edit-plans badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
@@ -849,7 +861,7 @@ class PanelController extends Controller
                     }
                     return $action;
                 })
-                ->rawColumns(['status','action'])
+                ->rawColumns(['status','action','amount','total'])
                 ->make(true);
         }
     }
@@ -1104,12 +1116,16 @@ class PanelController extends Controller
                     }
                     return $status;
                 })
+                ->addColumn('amount', function($row){
+                    $amount = $row->amount.' AED';
+                    return $amount;
+                })
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="action-request badge bg-success" data-action="approve" data-id="'.$row->id.'" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approve</a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="action-request badge bg-danger" data-action="reject" data-id="'.$row->id.'" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Reject</a>';
                     return $action;
                 })
-                ->rawColumns(['status','action'])
+                ->rawColumns(['amount','status','action'])
                 ->make(true);
         }
     }
@@ -1130,11 +1146,15 @@ class PanelController extends Controller
                     }
                     return $status;
                 })
+                ->addColumn('amount', function($row){
+                    $amount = $row->amount.' AED';
+                    return $amount;
+                })
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="badge bg-success" ><i class="fa fa-check">&nbsp;&nbsp;</i>Approved</a>';
                     return $action;
                 })
-                ->rawColumns(['status','action'])
+                ->rawColumns(['amount','status','action'])
                 ->make(true);
         }
     }
@@ -1155,11 +1175,15 @@ class PanelController extends Controller
                     }
                     return $status;
                 })
+                ->addColumn('amount', function($row){
+                    $amount = $row->amount.' AED';
+                    return $amount;
+                })
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="badge bg-danger" ><i class="fa fa-ban">&nbsp;&nbsp;</i>Rejected</a>';
                     return $action;
                 })
-                ->rawColumns(['status','action'])
+                ->rawColumns(['amount','status','action'])
                 ->make(true);
         }
     }
@@ -1323,6 +1347,10 @@ class PanelController extends Controller
                     }
                     return $status;
                 })
+                ->addColumn('referral_amt', function($row){
+                    $referral = $row->referral_amt.' AED';
+                    return $referral;
+                })
                 ->addColumn('action', function($row){
                     $action = '<a href="javascript:void(0)" class="removeReferral badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i>Delete</a>';
                     
@@ -1333,7 +1361,7 @@ class PanelController extends Controller
                     }*/
                     return $action;
                 })
-                ->rawColumns(['status','action'])
+                ->rawColumns(['referral_amt','status','action'])
                 ->make(true);
         }
     }

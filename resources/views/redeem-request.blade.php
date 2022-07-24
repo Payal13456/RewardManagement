@@ -50,7 +50,7 @@
                                         <tr>
                                             <th>#</th>
                                             <th>User Name</th>
-                                            <th>Amount</th>
+                                            <th>Amount (in AED)</th>
                                             {{-- <th>Status</th> --}}
                                             <th>Action</th>
                                         </tr>
@@ -67,7 +67,7 @@
                                         <tr>
                                             <th>#</th>
                                             <th>User Name</th>
-                                            <th>Amount</th>
+                                            <th>Amount (in AED)</th>
                                             {{-- <th>Status</th> --}}
                                             <th>Action</th>
                                         </tr>
@@ -84,7 +84,7 @@
                                         <tr>
                                             <th>#</th>
                                             <th>User Name</th>
-                                            <th>Amount</th>
+                                            <th>Amount (in AED)</th>
                                             {{-- <th>Status</th> --}}
                                             <th>Action</th>
                                         </tr>
