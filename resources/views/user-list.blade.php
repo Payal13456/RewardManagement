@@ -40,6 +40,7 @@
                                     <th>Phone</th>
                                     <th>DOB</th>
                                     <th>Location</th>
+                                    <th>Membership Expiry</th>
                                     <th>Emirates ID</th>
                                     <th>Passport</th>
                                     <th>Address</th>
@@ -107,6 +108,7 @@
                     { data: 'mobile_no', name: 'mobile_no' },
                     { data: 'dob', name: 'dob' },
                     { data: 'location', name: 'location', sWidth: '20%' },
+                    { data: 'membershipExpiry', name: 'membershipExpiry' },
                     { data: 'emirates_id', name: 'emirates_id' },
                     { data: 'passport_no', name: 'passport_no' },
                     { data: 'address', name: 'address' },
@@ -204,6 +206,7 @@
                 data: { action: action, userId: userId },
                 success: function(re) {
                     if (re.status === true) {
+                        console.log(re.userDt);
                         $('#viewDetailsModalTitle').text('').text('User : '+re.userDt.name);
                         var location = '';
                         var emiratesId = '';
@@ -211,19 +214,26 @@
                         var mobileNo = '';
                         var emailAddress = '';
                         var dateOfBirth = '';
+                        var membershipExpiry = '';
                         if(re.userDt.location !== null) { location = re.userDt.location; }
                         if(re.userDt.emirates_id !== null) { emiratesId = re.userDt.emirates_id; }
                         if(re.userDt.passport_no !== null) { passportNo = re.userDt.passport_no; }
                         if(re.userDt.email !== null) { emailAddress = re.userDt.email; }
                         if(re.userDt.dob !== null) { dateOfBirth = re.userDt.dob; }
                         if(re.userDt.mobile_no !== null) { mobileNo = re.userDt.country_code+' '+re.userDt.mobile_no; }
+                        if(re.userDt.membershipExpiry !== null) { membershipExpiry = re.userDt.membershipExpiry; }
+                        var userAddress = '';
+                        if(re.userDt.userAdd !== null) {
+                            userAddress = re.userDt.userAdd.address_line1+', '+re.userDt.userAdd.address_line2+', '+re.userDt.userAdd.landmark+', '+re.userDt.userAdd.city+', '+re.userDt.userAdd.state+', '+re.userDt.userAdd.country+' - '+re.userDt.userAdd.pincode;
+                        }
+
                         var userProfile = '<div class="card card-primary card-outline">'+
                             '<div class="card-body box-profile">'+
                                 '<div class="text-center">'+
                                     '<img class="profile-user-img img-fluid img-circle" src="{{asset('public/assets/images/faces/2.jpg')}}" alt="User profile picture">'+
                                 '</div>'+
                                 '<h3 class="profile-username text-center">'+re.userDt.name+' '+re.userDt.last_name+'</h3>'+
-                                '<p class="text-muted text-center">'+location+'</p>'+
+                                '<p class="text-muted text-center">'+userAddress+'</p>'+
                                 '<ul class="list-group list-group-unbordered mb-3">'+
                                     '<li class="list-group-item">'+
                                         '<b>Mobile No</b> <a class="float-end" href="tel:'+mobileNo+'">'+mobileNo+'</a>'+
@@ -239,6 +249,9 @@
                                     '</li>'+
                                     '<li class="list-group-item">'+
                                         '<b>Passport No</b> <a class="float-end">'+passportNo+'</a>'+
+                                    '</li>'+
+                                    '<li class="list-group-item">'+
+                                        '<b>Membership Expiry</b> <a class="float-end">'+membershipExpiry+'</a>'+
                                     '</li>'+
                                 '</ul>'+
                             '</div>'+
@@ -283,9 +296,11 @@
                                             '<thead>'+
                                                 '<tr>'+
                                                     '<th>#</th>'+
-                                                    '<th>Request Date</th>'+
-                                                    '<th>Request Amount (in AED)</th>'+
-                                                    '<th>Approved Status</th>'+
+                                                    '<th>Date</th>'+
+                                                    '<th>Redemption mode</th>'+
+                                                    '<th>Fulfillment</th>'+
+                                                    '<th>Amount</th>'+
+                                                    '<th>Status</th>'+
                                                 '</tr>'+
                                             '</thead>'+
                                             '<tbody>'+
@@ -337,6 +352,8 @@
                                 tableRTr += '<tr>'+
                                     '<td>'+(key+1)+'</td>'+
                                     '<td>'+value.req_date+'</td>'+
+                                    '<td>Wire Transfer <br> A/c : '+value.acc_no+' </td>'+
+                                    '<td>'+value.approval_date+' </td>'+
                                     '<td>'+value.amount+' AED</td>'+
                                     '<td>'+value.is_approved+'</td>'+
                                 '</tr>';

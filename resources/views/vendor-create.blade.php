@@ -44,7 +44,7 @@
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="name" class="label-control">Name <span class="text-danger">*</span></label>
-                                                <input type="text" id="name" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Name" maxlength="50" autocomplete="off" value="{{old('name')}}">
+                                                <input type="text" id="name" class="form-control @error('name') is-invalid @enderror" name="name" placeholder="Name" maxlength="50" autocomplete="off" value="{{old('name')}}" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '').replace(/(\..*)\./g, '$1');">
                                                 @error('name')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -62,7 +62,7 @@
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror ml-1" name="mobile_no" placeholder="Mobile Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');" value="{{old('mobile_no')}}">
+                                                    <input type="text" id="mobile_no" class="form-control @error('mobile_no') is-invalid @enderror ml-1" name="mobile_no" placeholder="Mobile Number" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" value="{{old('mobile_no')}}">
                                                 </div>
                                                 @error('mobile_no')
                                                     <span class="invalid-feedback" role="alert">
@@ -75,7 +75,7 @@
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="email" class="label-control">Email <span class="text-danger">*</span></label>
-                                                <input type="text" id="email" class="form-control @error('email') is-invalid @enderror" value="{{old('email')}}" name="email" placeholder="Email" maxlength="50" autocomplete="off">
+                                                <input type="text" id="email" class="form-control @error('email') is-invalid @enderror" value="{{old('email')}}" name="email" placeholder="Email" maxlength="50" autocomplete="off" oninput="this.value = this.value.replace(/[^A-Za-z0-9@-_.]/g, '').replace(/(\..*)\./g, '$1');">
                                                 @error('email')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -104,7 +104,7 @@
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="shop_name" class="label-control">Shop Name <span class="text-danger">*</span></label>
-                                                <input type="text" id="shop_name" value="{{old('shop_name')}}" class="form-control @error('shop_name') is-invalid @enderror" name="shop_name" placeholder="Shop Name" maxlength="70" autocomplete="off">
+                                                <input type="text" id="shop_name" value="{{old('shop_name')}}" class="form-control @error('shop_name') is-invalid @enderror" name="shop_name" placeholder="Shop Name" maxlength="70" autocomplete="off" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '').replace(/(\..*)\./g, '$1');">
                                                 @error('shop_name')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -113,8 +113,8 @@
                                             </div>
                                             
                                             <div class="col-md-6">
-                                                <label for="shop_website" class="label-control">Website <span class="text-danger">*</span></label>
-                                                <input type="url" id="shop_website" value="{{old('shop_website')}}" class="form-control @error('shop_website') is-invalid @enderror" name="shop_website" placeholder="Website" maxlength="70" autocomplete="off">
+                                                <label for="shop_website" class="label-control">Website </label>
+                                                <input type="url" id="shop_website" value="{{old('shop_website')}}" class="form-control @error('shop_website') is-invalid @enderror" name="shop_website" placeholder="Website" maxlength="70" autocomplete="off" oninput="this.value = this.value.replace(/[^A-Za-z0-9.:/]/g, '').replace(/(\..*)\./g, '$1');">
                                                 @error('shop_website')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -136,7 +136,7 @@
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="shop_landline" class="mb-2 ml-1 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input type="text" id="shop_landline" class="mb-2 ml-1 shop_landline form-control @error('shop_landline') is-invalid @enderror" name="shop_landline[]" placeholder="Shop Landline Number" maxlength="15" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
                                                 </div>
                                                 @error('shop_landline')
                                                     <span class="invalid-feedback" role="alert">
@@ -157,7 +157,7 @@
                                                         @endforeach
                                                         @endif
                                                     </select>
-                                                    <input type="text" id="shop_mobile" class="mb-2 ml-1 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9 ]/g, '').replace(/(\..*)\./g, '$1');">
+                                                    <input type="text" id="shop_mobile" class="mb-2 ml-1 form-control @error('shop_mobile') is-invalid @enderror" name="shop_mobile[]" placeholder="Shop Mobile Number" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
                                                 </div>
                                                 @error('shop_mobile')
                                                     <span class="invalid-feedback" role="alert">
@@ -173,7 +173,7 @@
                                                 <span class="fa fa-plus btn btn-primary btn-xs multiple-field-btn add-multiple-email float-end mb-1"></span>
 
                                                 <div class="input-group shop_email_div">
-                                                    <input type="text" id="shop_email" class="mb-2 shop_email form-control @error('shop_email') is-invalid @enderror" name="shop_email[]" placeholder="Shop Email Address" maxlength="70" autocomplete="off">
+                                                    <input type="text" id="shop_email" class="mb-2 shop_email form-control @error('shop_email') is-invalid @enderror" name="shop_email[]" placeholder="Shop Email Address" maxlength="70" autocomplete="off" oninput="this.value = this.value.replace(/[^A-Za-z0-9-_@.]/g, '').replace(/(\..*)\./g, '$1');">
                                                 </div>
                                                 @error('shop_email')
                                                     <span class="invalid-feedback" role="alert">
@@ -183,7 +183,7 @@
                                             </div>
 
                                             <div class="col-md-6">
-                                                <label for="cover_img" class="label-control">Cover Image <span class="text-danger">*</span></label>
+                                                <label for="cover_img" class="label-control">Cover Image </label>
                                                 <span class="fa fa-plus btn btn-primary btn-xs multiple-field-btn add-multiple-coverImg float-end mb-1"></span>
                                                 
                                                 <div class="input-group shop_cover_img_div">
@@ -210,7 +210,7 @@
 
                                             <div class="col-md-6">
                                                 <label for="location" class="label-control">Location <span class="text-danger">*</span></label>
-                                                <input type="text" id="location" value="{{old('location')}}" class="form-control @error('location') is-invalid @enderror" name="location" placeholder="Location" maxlength="100" autocomplete="off">
+                                                <input type="text" id="location" value="{{old('location')}}" class="form-control @error('location') is-invalid @enderror" name="location" placeholder="Location" maxlength="100" autocomplete="off" oninput="this.value = this.value.replace(/[^A-Za-z0-9(.-) ]/g, '').replace(/(\..*)\./g, '$1');">
                                                 @error('location')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -222,7 +222,7 @@
                                         <div class="form-group row mb-4">
                                             <div class="col-md-6">
                                                 <label for="latitude" class="label-control">Latitude <span class="text-danger">*</span></label>
-                                                <input type="text" id="latitude" value="{{old('latitude')}}" class="form-control @error('latitude') is-invalid @enderror" name="latitude" placeholder="Latitude" maxlength="10" autocomplete="off">
+                                                <input type="text" id="latitude" value="{{old('latitude')}}" class="form-control @error('latitude') is-invalid @enderror" name="latitude" placeholder="Latitude" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                 @error('latitude')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>
@@ -232,7 +232,7 @@
                                         
                                             <div class="col-md-6">
                                                 <label for="longitude" class="label-control">Longitude <span class="text-danger">*</span></label>
-                                                <input type="text" id="longitude" value="{{old('longitude')}}" class="form-control @error('longitude') is-invalid @enderror" name="longitude" placeholder="Longitude" maxlength="10" autocomplete="off">
+                                                <input type="text" id="longitude" value="{{old('longitude')}}" class="form-control @error('longitude') is-invalid @enderror" name="longitude" placeholder="Longitude" maxlength="10" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                                 @error('longitude')
                                                     <span class="invalid-feedback" role="alert">
                                                         <span>{{ $message }}</span>

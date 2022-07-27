@@ -167,7 +167,12 @@
                     console.log(re);
                     if (re.status === true) {
                         $('#viewDetailsModalTitle').text('').text('Vendor : '+re.vendor.name);
-                        
+                        var website = '';
+                        var websiteHref = '#!';
+                        if(re.vendor.website != null) { 
+                            website = re.vendor.website; 
+                            websiteHref = re.vendor.website; 
+                        }
                         var vendorProfile = '<div class="card card-primary card-outline">'+
                             '<div class="card-body box-profile">'+
                                 '<div class="text-center">'+
@@ -183,7 +188,7 @@
                                         '<b>Email</b> <a class="float-end" href="mailto:'+re.vendor.email+'">'+re.vendor.email+'</a>'+
                                     '</li>'+
                                     '<li class="list-group-item">'+
-                                        '<b>Website</b> <a href="'+re.vendor.website+'" target="_blank" class="float-end">'+re.vendor.website+'</a>'+
+                                        '<b>Website</b> <a href="'+websiteHref+'" target="_blank" class="float-end">'+website+'</a>'+
                                     '</li>'+
                                     '<li class="list-group-item">'+
                                         '<b>Opening Time</b> <a class="float-end">'+re.vendor.opening_time+'</a>'+
@@ -208,10 +213,12 @@
                                             '</li>'+
                                             '<li class="nav-item cursor-point" role="presentation">'+
                                                 '<span class="nav-link" id="emails-div-tab" data-bs-toggle="pill" data-bs-target="#emails-div" role="tab" aria-controls="emails-div" aria-selected="false">Emails</span>'+
-                                            '</li>'+
-                                            
+                                            '</li>'+                                            
                                             '<li class="nav-item cursor-point" role="presentation">'+
                                                 '<span class="nav-link" id="coverImg-div-tab" data-bs-toggle="pill" data-bs-target="#coverImg-div" role="tab" aria-controls="coverImg-div" aria-selected="false">Cover Img</span>'+
+                                            '</li>'+
+                                            '<li class="nav-item cursor-point" role="presentation">'+
+                                                '<span class="nav-link" id="description-div-tab" data-bs-toggle="pill" data-bs-target="#description-div" role="tab" aria-controls="description-div" aria-selected="false">Description</span>'+
                                             '</li>'+
                                         '</ul>'+
                                     '</div>'+
@@ -266,19 +273,21 @@
                                             '<div class="tab-pane fade" id="coverImg-div" role="tabpanel" aria-labelledby="coverImg-div-tab">'+
                                                 '<div class="container-fluid">'+
                                                     '<div class="col-md-12">'+
-                                                        '<div class="row">'+
-                                                            '<div class="col-md-3">'+
-                                                                '<img class="d-block w-100" src="'+baseUrl+'/public/uploads/shop/cover/0WYen1IVESxv5Jq3.1657683806.jpg" alt="First slide">'+
-                                                            '</div>'+
-                                                            '<div class="col-md-3">'+
-                                                                '<img class="d-block w-100" src="'+baseUrl+'/public/uploads/shop/cover/GPAyHFicKVDanNeg.1657647226.jpg" alt="Second slide">'+
-                                                            '</div>'+
-                                                            '<div class="col-md-3">'+
-                                                                '<img class="d-block w-100" src="'+baseUrl+'/public/uploads/shop/cover/188RyOCMseVo8tVE.1657683806.jpg" alt="Third slide">'+
-                                                            '</div>'+
+                                                        '<div class="row" id="coverImg-show">'+
+                                                            
                                                         '</div>'+
                                                     '</div>'+
-                                                '</dvi>'+
+                                                '</div>'+
+                                            '</div>'+
+
+                                            '<div class="tab-pane fade" id="description-div" role="tabpanel" aria-labelledby="description-div-tab">'+
+                                                '<div class="container-fluid">'+
+                                                    '<div class="col-md-12">'+
+                                                        '<div class="row" id="description-show">'+
+                                                            
+                                                        '</div>'+
+                                                    '</div>'+
+                                                '</div>'+
                                             '</div>'+
 
                                         '</div>'+
@@ -329,6 +338,20 @@
                                 i++;
                             });
                             $('#emails-div-tbl').find('tbody').html(emailsTr);
+                        }
+
+                        if(re.coverImg.length > 0) {
+                            var coverImgHtml = '';
+                            $.each(re.coverImg, function (key, value) {
+                                coverImgHtml +='<div class="col-md-3">'+
+                                    '<img class="d-block w-100" src="'+baseUrl+'/public/uploads/shop/cover/'+value.cover_image+'" alt="'+value.cover_image+'">'+
+                                '</div>';
+                            });
+                            $('#coverImg-show').html('').html(coverImgHtml);
+                        }
+
+                        if(re.vendor.description.length > 0) {
+                            $('#description-show').html('').html('<div>'+re.vendor.description+'</div>');
                         }
 
                         $('#landline-div-tbl, #mobile-no-div-tbl, #emails-div-tbl').DataTable({

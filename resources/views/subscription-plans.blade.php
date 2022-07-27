@@ -13,13 +13,13 @@
     <div class="page-title">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Plans</h3>
+                <h3>Subscription Plans</h3>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{URL::route('/')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Plans</li>
+                        <li class="breadcrumb-item active" aria-current="page">Subscription Plans</li>
                     </ol>
                 </nav>
             </div>
@@ -29,70 +29,42 @@
     <!-- Basic Horizontal form layout section start -->
     <section id="basic-horizontal-layouts">
         <div class="row match-height">
-            {{-- <div class="offset-md-1 col-md-11 col-12">
-                <div class="card">
-                    <div class="card-header d-flex">
-                        <h4 class="card-title col-md-10">Plans List</h4>
-                        <button class="btn btn-primary btn-sm col-md-2 add-subscription-plan">Add Plans/Subscription</button>
-                    </div>
-                    <div class="card-content">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover table-bordered" id="subscription-plan-tbl">
-                                    <thead class="text-nowrap">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Plan Name</th>
-                                            <th>Plan Validity</th>
-                                            <th>Plan Amount</th>
-                                            <th>Plan Tax</th>
-                                            <th>Total Plan Amount</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-nowrap">
-            
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
 
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header p-2">
                         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                             <li class="nav-item cursor-point" role="presentation">
-                                <span class="nav-link active" id="plan-subscription-list-tab" data-bs-toggle="pill" data-bs-target="#plan-subscription-list" role="tab" aria-controls="plan-subscription-list" aria-selected="true">Plan/Subscription List</span>
+                                <span class="nav-link active" id="plan-subscription-list-tab" data-bs-toggle="pill" data-bs-target="#plan-subscription-list" role="tab" aria-controls="plan-subscription-list" aria-selected="true">Subscription Plans List</span>
                             </li>
                             <li class="nav-item cursor-point" role="presentation">
-                                <span class="nav-link" id="plan-subsrcription-add-tab" data-bs-toggle="pill" data-bs-target="#plan-subsrcription-add" role="tab" aria-controls="plan-subsrcription-add" aria-selected="false">Add Plan/Subscription</span>
+                                <span class="nav-link" id="plan-subsrcription-add-tab" data-bs-toggle="pill" data-bs-target="#plan-subsrcription-add" role="tab" aria-controls="plan-subsrcription-add" aria-selected="false">Add Subscription Plans</span>
                             </li>
                         </ul>
                     </div>
                     <div class="card-body">
                         <div class="tab-content" id="pills-tabContent">
                             <div class="tab-pane fade show active" id="plan-subscription-list" role="tabpanel" aria-labelledby="plan-subscription-list-tab">
-                                <table class="table table-hover table-bordered" id="subscription-plan-tbl">
-                                    <thead class="text-nowrap">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Plan Name</th>
-                                            <th>Plan Validity</th>
-                                            <th>Plan Amount (in AED)</th>
-                                            <th>Plan Tax</th>
-                                            <th>Total Plan Amount (in AED)</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="text-nowrap">
-            
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-bordered" id="subscription-plan-tbl">
+                                        <thead class="text-nowrap">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Plan Name</th>
+                                                <th>Category</th>
+                                                <th>Plan Validity</th>
+                                                <th>Plan Amount (in AED)</th>
+                                                <th>Plan Tax</th>
+                                                <th>Total Plan Amount (in AED)</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-nowrap">
+                
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
                             <div class="tab-pane fade" id="plan-subsrcription-add" role="tabpanel" aria-labelledby="plan-subsrcription-add-tab">
@@ -106,26 +78,28 @@
                                                         <div class="row">
                                                             <input type="hidden" name="editPlansId" id="editPlansId">
                                                             
-                                                            <div class="mb-4 col-md-6 form-group">
-                                                                <label for="category_id" class="label-control">Category <span class="text-danger">*</span></label>
-                                                                <select name="category_id[]" id="category_id" class="select2-full select2 form-control @error('category_id') is-invalid @enderror" multiple >
-                                                                    @if(count($category) > 0)
-                                                                    @foreach ($category as $ct)
-                                                                    <option value="{{$ct->id}}">{{$ct->name}}</option>
-                                                                    @endforeach
-                                                                    @endif
-                                                                </select>
-                                                                @error('category_id')
+                                                            <div class="col-md-6 form-group mb-4">
+                                                                <label for="plan_name" class="label-control">Plan Name <span class="text-danger">*</span></label>
+                                                                <input type="text" id="plan_name" class="form-control @error('plan_name') is-invalid @enderror" name="plan_name" placeholder="Plan Name" maxlength="50" autocomplete="off">
+                                                                @error('plan_name')
                                                                     <span class="invalid-feedback" role="alert">
                                                                         <span>{{ $message }}</span>
                                                                     </span>
                                                                 @enderror
                                                             </div>
-                                                            
-                                                            <div class="col-md-6 form-group mb-4">
-                                                                <label for="plan_name" class="label-control">Plan Name <span class="text-danger">*</span></label>
-                                                                <input type="text" id="plan_name" class="form-control @error('plan_name') is-invalid @enderror" name="plan_name" placeholder="Plan Name" maxlength="50" autocomplete="off">
-                                                                @error('plan_name')
+
+                                                            <div class="mb-4 col-md-6 form-group">
+                                                                <label for="category_id" class="label-control">Category <span class="text-danger">*</span></label>
+                                                                <div id="dynamic-category">
+                                                                    <select name="category_id[]" id="category_id" class="select2-full select2 form-control @error('category_id') is-invalid @enderror" multiple >
+                                                                        @if(count($category) > 0)
+                                                                        @foreach ($category as $ct)
+                                                                        <option value="{{$ct->id}}">{{$ct->name}}</option>
+                                                                        @endforeach
+                                                                        @endif
+                                                                    </select>
+                                                                </div>
+                                                                @error('category_id')
                                                                     <span class="invalid-feedback" role="alert">
                                                                         <span>{{ $message }}</span>
                                                                     </span>
@@ -217,6 +191,7 @@
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex' },
                     { data: 'name', name: 'name' },
+                    { data: 'category', name: 'category' },
                     { data: 'validity', name: 'validity' },
                     { data: 'amount', name: 'amount' },
                     { data: 'tax', name: 'tax' },
@@ -306,6 +281,22 @@
                         $('#plan_tax').val(re.data.tax);
                         $('#plan_total').val(re.data.total).attr('readonly','readonly');
                         $('#plan-subsrcription-add-tab').text('Edit Plan/Subscription');
+
+                        // var cateArr = @json($category);
+                        // var dynamicCategory = ' <select name="category_id[]" id="category_id" class="select2-full select2 form-control @error('category_id') is-invalid @enderror" multiple >';
+                            
+                        //     var selected = '';
+                        //     $.each(re.category, function (ke, valu) {
+                        //         $.each(re.category, function (key, value) {
+                        //             if($.inArray(value.category_id, cateArr.id) !== -1) {
+                        //                 selected = "selected";
+                        //             }
+                        //             dynamicCategory += '<option '+selected+' value="'+valu.id+'">'+valu.name+'</option>';
+                        //         });
+                        //     });
+                        //     dynamicCategory += '</select>';
+                        // $('#dynamic-category').html('').html(dynamicCategory);
+                        // $('.select2').select2();
 
                         // var cateArr = @json($category);
                         // if(cateArr.length > 0) {

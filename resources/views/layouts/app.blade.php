@@ -44,8 +44,7 @@
                         <p>{{date('Y')}} &copy; {{config('app.name')}}</p>
                     </div>
                     <div class="float-end">
-                        <p>Developed by <span class="text-danger"><i class="bi bi-heart"></i></span> <a
-                                href="https://tryambaka.com/" target="_blank">Tryambaka Techno Solutions</a></p>
+                        <p>Developed by <span class="text-danger"></span> <a href="https://tryambaka.com/" target="_blank">Tryambaka Techno Solutions</a></p>
                     </div>
                 </div>
             </footer>

@@ -41,8 +41,8 @@
                                 <input type="hidden" name="editCategoryId" id="editCategoryId">
                                 <div class="col-md-4 form-group">
                                     <label for="users" class="label-control">Users <span class="text-danger">*</span></label>
-                                    <select name="users[]" id="users" class="select2 form-control @error('users') is-invalid @enderror" multiple>
-                                        <option value="" disabled >Select User</option>
+                                    <select name="users[]" id="users" class="user-list select2 form-control @error('users') is-invalid @enderror" multiple>
+                                        <option value="">All</option>
                                         @if(count($userList) > 0)
                                         @foreach ($userList as $user)
                                         <option value="{{$user->id}}">{{$user->name.' ('.$user->email.')'}}</option>
@@ -82,10 +82,18 @@
 @push('script')
 <script>
     CKEDITOR.replace( 'message',{
-            toolbar: [
-                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'] },
-                { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
-            ]
-        });
+        toolbar: [
+            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ], items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'] },
+            { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ], items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+        ]
+    });
+
+    $('.user-list').on("select2:select", function (e) { 
+        var data = e.params.data.text;
+        if(data === "All") {
+            $(".user-list > option").prop("selected", true);
+            $(".user-list").trigger("change");
+        }
+    });
 </script>
 @endpush

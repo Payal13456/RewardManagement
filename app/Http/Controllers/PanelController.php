@@ -52,7 +52,10 @@ class PanelController extends Controller
     public function getAllUsersList (Request $request)
     {
         if ($request->ajax()) {
-            $data = User::where('role',2)->latest()->get();
+            $data = User::select('users.*', 'subscription.expiry_date')
+                    ->leftjoin('subscription','users.id','=','subscription.user_id')    
+                    ->where('users.role',2)->latest()->get();
+                    
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('location', function($row){
@@ -73,6 +76,13 @@ class PanelController extends Controller
                 ->addColumn('dob', function($row){
                     $dob = date('d-m-Y', strtotime($row->dob));
                     return $dob;
+                })
+                ->addColumn('membershipExpiry', function ($row) {
+                    $expiryDate = '';
+                    if(!empty($row->expiry_date)) {
+                        $expiryDate = date('d M, Y', strtotime($row->expiry_date));
+                    }
+                    return $expiryDate;
                 })
                 ->addColumn('blockStatus', function($row){
                     if($row->is_blocked == 0) {
@@ -109,7 +119,7 @@ class PanelController extends Controller
                     </span>';
                     return $action;
                 })
-                ->rawColumns(['location','dob','mobile_no','status','process','blockStatus','name'])
+                ->rawColumns(['membershipExpiry','location','dob','mobile_no','status','process','blockStatus','name'])
                 ->make(true);
         }
     }
@@ -134,10 +144,10 @@ class PanelController extends Controller
     {
         $action = User::where('id',$request->id)->where('role',2)->first();
         if($action) {
-            if($request->action === 'active') {
+            if($request->action === 'activate') {
                 User::where('id',$request->id)->where('role',2)->update(['status' => 2]);
             }
-            if($request->action === 'deactive') {
+            if($request->action === 'deactivate') {
                 User::where('id',$request->id)->where('role',2)->update(['status' => 0]);
             }
             return (['status' => true, 'message' => 'User '.$request->action.'d successfully.']);
@@ -221,9 +231,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
                 })
@@ -239,9 +249,9 @@ class PanelController extends Controller
                     <a href="javascript:void(0)" class="edit-category badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i>Edit</a>';
                     
                     if($row->status == 0) {
-                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="active" data-id="'.$row->id.'" class="activeDeactiveCategory badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</a>';
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="activate" data-id="'.$row->id.'" class="activeDeactiveCategory badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</a>';
                     } else if($row->status == 1) {
-                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactive" data-id="'.$row->id.'" class="activeDeactiveCategory badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</a>';
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactivate" data-id="'.$row->id.'" class="activeDeactiveCategory badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactivate</a>';
                     }
                     return $action;
                 })
@@ -278,10 +288,10 @@ class PanelController extends Controller
     {
         $action = Categories::where('id',$request->id)->first();
         if($action) {
-            if($request->action === 'active') {
+            if($request->action === 'activate') {
                 Categories::where('id',$request->id)->update(['status' => 1]);
             }
-            if($request->action === 'deactive') {
+            if($request->action === 'deactivate') {
                 Categories::where('id',$request->id)->update(['status' => 0]);
             }
             return (['status' => true, 'message' => 'Category '.$request->action.'d successfully.']);
@@ -306,7 +316,7 @@ class PanelController extends Controller
             'email'             =>  'required|unique:vendor,email',
             'category_id'       =>  'required',
             'shop_name'         =>  'required',
-            'shop_website'      =>  'required|url',
+            // 'shop_website'      =>  'required|url',
             'shop_landline_code'=>  'required',
             'shop_landline'     =>  'required',
             'shop_mob_code'     =>  'required',
@@ -315,7 +325,7 @@ class PanelController extends Controller
             'location'          =>  'required',
             'latitude'          =>  'required',
             'longitude'         =>  'required',
-            'cover_img'         =>  'required',
+            // 'cover_img'         =>  'required',
             'shop_logo'         =>  'required',
             'opening_time'      =>  'required',
             'closing_time'      =>  'required',
@@ -328,8 +338,8 @@ class PanelController extends Controller
             'email.required'     =>  'Email must be required.',
             'category_id.required'  =>  'Please select Category Id.',
             'shop_name.required'    =>  'Shop Name must be required.',
-            'shop_website.required' =>  'Shop website url must be required.',
-            'shop_website.url'      =>  'Website url must be in valide url formt.',
+            // 'shop_website.required' =>  'Shop website url must be required.',
+            // 'shop_website.url'      =>  'Website url must be in valide url formt.',
             'shop_landline_code.required'   =>  'Landline Phone code must be required.',
             'shop_landline.required'    =>  'Landline must be required.',
             'shop_mob_code.required'    =>  'Mobile Phone code must be required.',
@@ -338,7 +348,7 @@ class PanelController extends Controller
             'location.required'         =>  'Location must be required.',
             'latitude.required'         =>  'Location latitude must be required.',
             'longitude.required'        =>  'Location longitude must be required.',
-            'cover_img.required'        =>  'Cover Image must be required.',
+            // 'cover_img.required'        =>  'Cover Image must be required.',
             'shop_logo.required'        =>  'Shop Logo must be required.',
             'opening_time.required'     =>  'Opening Time must be required',
             'closing_time.required'     =>  'Closing Time must be required',
@@ -374,7 +384,7 @@ class PanelController extends Controller
             );
             $vendorId = Vendors::insertGetId($detailArr);
             if($vendorId) {
-                if(count($request->cover_img) > 0) {
+                if(isset($request->cover_img) && count($request->cover_img) > 0) {
                     for($x=0; $x<count($request->cover_img); $x++) {
                         $shopCoverLogo = null;
                         if(!empty($request->cover_img[$x])) {
@@ -459,9 +469,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
                 })
@@ -488,9 +498,9 @@ class PanelController extends Controller
                     <a href="javascript:void(0)" class="viewDetailsVendor badge bg-dark" data-action="view" data-id="'.$row->id.'" ><i class="fa fa-street-view">&nbsp;&nbsp;</i>View</a>';
                     
                     if($row->status == 0) {
-                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="active" data-id="'.$row->id.'" class="actionRequestVendor badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</a>';
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="activate" data-id="'.$row->id.'" class="actionRequestVendor badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</a>';
                     } else if($row->status == 1) {
-                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactive" data-id="'.$row->id.'" class="actionRequestVendor badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</a>';
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactivate" data-id="'.$row->id.'" class="actionRequestVendor badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactivate</a>';
                     }
                     return $action;
                 })
@@ -532,7 +542,7 @@ class PanelController extends Controller
                 return (['status' => false, 'message' => 'Failed to delete Vendor, Try again.']);
             }
         }
-        if($request->action === 'active') {
+        if($request->action === 'activate') {
             $vendor = Vendors::find($request->id);
             if($vendor) {
                 $vendor = Vendors::where('id',$request->id)->update(['status' => 1]);
@@ -546,7 +556,7 @@ class PanelController extends Controller
                 return (['status' => false, 'message' => 'Failed to active Vendor, Try again.']);
             }
         }
-        if($request->action === 'deactive') {
+        if($request->action === 'deactivate') {
             $vendor = Vendors::find($request->id);
             if($vendor) {
                 $vendor = Vendors::where('id',$request->id)->update(['status' => 0]);
@@ -747,7 +757,9 @@ class PanelController extends Controller
     {
         $usersDtl = User::find($request->userId);
         if($usersDtl) {
+            $usersDtl->membershipExpiry = null;
             if($usersDtl->dob !== null) { $usersDtl->dob = date("d M, Y",strtotime($usersDtl->dob)); }
+            $usersDtl->userAdd = \DB::table('user_information')->select('user_id','address_line1','address_line2','landmark','state','city','pincode','country')->where('user_id', $request->userId)->first();
 
             $subscript = Subscription::select('subscription.plan_id','plan.name as plan_name','subscription.transaction_id','subscription.expiry_date','subscription.is_expired','subscription.status')->join('plan','subscription.plan_id','=','plan.id')->where('subscription.user_id',$request->userId)->orderBy('subscription.id','DESC')->get();
             if(count($subscript) > 0) {
@@ -756,18 +768,24 @@ class PanelController extends Controller
                     if($sub->is_expired == 0) { $sub->is_expired = '<span class="badge bg-success">Not Expired</span>'; }
                     else if($sub->is_expired == 1) { $sub->is_expired = '<span class="badge bg-danger">Expired</span>'; }
                     
-                    if($sub->status == 0) { $sub->status = '<span class="badge bg-danger">Deactive</span>'; }
-                    else if($sub->status == 1) { $sub->status = '<span class="badge bg-success">Active</span>'; }
+                    if($sub->status == 0) { $sub->status = '<span class="badge bg-danger">Deactivate</span>'; }
+                    else if($sub->status == 1) { 
+                        $sub->status = '<span class="badge bg-success">Activate</span>';
+                        $usersDtl->membershipExpiry = date('d M, Y', strtotime($sub->expiry_date));
+                    }
                 }
             }
 
-            $redem = Redemption::select('user_id','is_approved','amount','status','created_at as req_date')->where('user_id',$request->userId)->orderBy('id','DESC')->get();
+            $redem = Redemption::select('redeem_req.user_id','redeem_req.is_approved','redeem_req.amount','redeem_req.status','redeem_req.approval_date','redeem_req.created_at as req_date','bank_info.acc_no')
+                        ->leftjoin('bank_info','redeem_req.bank_id','=','bank_info.id')
+                        ->where('redeem_req.user_id',$request->userId)->orderBy('redeem_req.id','DESC')->get();
             if(count($redem) > 0) {
                 foreach($redem as $red) {
                     if($red->is_approved == 0) { $red->is_approved = '<span class="badge bg-warning">Pending</span>'; }
                     else if($red->is_approved == 1) { $red->is_approved = '<span class="badge bg-success">Approved</span>'; }
                     else if($red->is_approved == 2) { $red->is_approved = '<span class="badge bg-danger">Rejected</span>'; }
                     $red->req_date = date('d M, Y',strtotime($red->req_date));
+                    $red->approval_date = (!empty($red->approval_date)) ? date('d M, Y',strtotime($red->approval_date)) : '';
                 }
             }
 
@@ -775,8 +793,8 @@ class PanelController extends Controller
             if(count($referral) > 0) {
                 foreach($referral as $ref) {
                     $ref->ref_date = date('d M, Y', strtotime($ref->ref_date));
-                    if($ref->status == 0) { $ref->status = '<span class="badge bg-danger">Deactive</span>'; }
-                    else if($ref->status == 1) { $ref->status = '<span class="badge bg-success">Active</span>'; }
+                    if($ref->status == 0) { $ref->status = '<span class="badge bg-danger">Deactivate</span>'; }
+                    else if($ref->status == 1) { $ref->status = '<span class="badge bg-success">Activate</span>'; }
                 }
             }
 
@@ -833,15 +851,27 @@ class PanelController extends Controller
     public function getAllSubscriptionPlanList (Request $request)
     {
         if ($request->ajax()) {
-            $data = Plans::latest()->get();
+            $data = Plans::select('plan.id','plan.name','plan.validity','plan.amount','plan.tax','plan.total','plan.status')->orderBy('plan.id','DESC')->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
+                })
+                ->addColumn('category', function($row){
+                    $category = [];
+                    $planCate = PlanCategory::select('category_id')->where('plan_id',$row->id)->get();
+                    if(count($planCate) > 0) {
+                        foreach($planCate as $pc) {
+                            $cate = Categories::select('name')->where('id', $pc->category_id)->first();
+                            $category[] = $cate->name;
+                        }
+                    }
+                    $category = implode(', ',$category);
+                    return $category;
                 })
                 ->addColumn('amount', function($row){
                     $amount = $row->amount. ' AED';
@@ -855,9 +885,9 @@ class PanelController extends Controller
                     $action = '<a href="javascript:void(0)" class="remove-plans badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="edit-plans badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
                     if($row->status == 0) {
-                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="active" data-id="'.$row->id.'" class="activeDeactivePlans badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</a>';
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="activate" data-id="'.$row->id.'" class="activeDeactivePlans badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</a>';
                     } else if($row->status == 1) {
-                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactive" data-id="'.$row->id.'" class="activeDeactivePlans badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</a>';
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactivate" data-id="'.$row->id.'" class="activeDeactivePlans badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactivate</a>';
                     }
                     return $action;
                 })
@@ -979,10 +1009,10 @@ class PanelController extends Controller
     {
         $action = Plans::where('id',$request->id)->first();
         if($action) {
-            if($request->action === 'active') {
+            if($request->action === 'activate') {
                 Plans::where('id',$request->id)->update(['status' => 1]);
             }
-            if($request->action === 'deactive') {
+            if($request->action === 'deactivate') {
                 Plans::where('id',$request->id)->update(['status' => 0]);
             }
             return (['status' => true, 'message' => 'Subscription Plan '.$request->action.'d successfully.']);
@@ -1067,9 +1097,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
                 })
@@ -1089,9 +1119,9 @@ class PanelController extends Controller
                     $action = '<a href="javascript:void(0)" class="remove-offers badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i> Delete</a> &nbsp;&nbsp;
                     <a href="javascript:void(0)" class="edit-offers badge bg-success" data-id="'.$row->id.'" ><i class="fa fa-edit">&nbsp;&nbsp;</i> Edit</a>';
                     if($row->status == 0) {
-                        $action .= '&nbsp;&nbsp;<span class="activeDeactiveOffers cursor-point badge bg-success" data-id="'.$row->id.'" data-action="active"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                        $action .= '&nbsp;&nbsp;<span class="activeDeactiveOffers cursor-point badge bg-success" data-id="'.$row->id.'" data-action="activate"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     } else if($row->status == 1) {
-                        $action .= '&nbsp;&nbsp;<span class="activeDeactiveOffers cursor-point badge bg-danger" data-id="'.$row->id.'" data-action="deactive"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
+                        $action .= '&nbsp;&nbsp;<span class="activeDeactiveOffers cursor-point badge bg-danger" data-id="'.$row->id.'" data-action="deactivate"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $action;
                 })
@@ -1110,9 +1140,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
                 })
@@ -1140,9 +1170,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
                 })
@@ -1169,9 +1199,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-warning"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
                 })
@@ -1196,6 +1226,7 @@ class PanelController extends Controller
 
             if(Redemption::where('id', $request->actionId)->update([
                 'is_approved'   =>  $action,
+                'approval_date' =>  date('Y-m-d H:i:s'),
                 'updated_at'    =>  date('Y-m-d H:i:s')
             ])) {
                 return ['status' => true, 'message' => 'Reedem Request has been '.$request->action.'ed'];
@@ -1235,10 +1266,10 @@ class PanelController extends Controller
     {
         $action = Offers::where('id',$request->id)->first();
         if($action) {
-            if($request->action === 'active') {
+            if($request->action === 'activate') {
                 Offers::where('id',$request->id)->update(['status' => 1]);
             }
-            if($request->action === 'deactive') {
+            if($request->action === 'deactivate') {
                 Offers::where('id',$request->id)->update(['status' => 0]);
             }
             return (['status' => true, 'message' => 'Offers '.$request->action.'d successfully.']);
@@ -1253,9 +1284,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
                 })
@@ -1341,9 +1372,9 @@ class PanelController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function($row){
-                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</span>';
+                    $status = '<span class="badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</span>';
                     if($row->status == 0) {
-                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</span>';
+                        $status = '<span class="badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactivate</span>';
                     }
                     return $status;
                 })
@@ -1355,9 +1386,9 @@ class PanelController extends Controller
                     $action = '<a href="javascript:void(0)" class="removeReferral badge bg-danger" data-id="'.$row->id.'" ><i class="fa fa-trash">&nbsp;&nbsp;</i>Delete</a>';
                     
                     if($row->status == 0) {
-                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="active" data-id="'.$row->id.'" class="activeDeactiveReferral badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Active</a>';
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="activate" data-id="'.$row->id.'" class="activeDeactiveReferral badge bg-success"><i class="fa fa-toggle-on">&nbsp;&nbsp;</i>Activate</a>';
                     } /*else if($row->status == 1) {
-                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactive" data-id="'.$row->id.'" class="activeDeactiveReferral badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactive</a>';
+                        $action .= '&nbsp;&nbsp; <a href="javascript:void(0)" data-action="deactivate" data-id="'.$row->id.'" class="activeDeactiveReferral badge bg-danger"><i class="fa fa-toggle-off">&nbsp;&nbsp;</i>Deactivate</a>';
                     }*/
                     return $action;
                 })
